@@ -166,6 +166,7 @@
     "no_data": "Aucune réponse enregistrée pour le moment.",
     "logout": "Déconnexion",
     "refresh": "Actualiser",
+    "last_updated": "Dernière mise à jour :",
     "gender_labels": {
       "M": "Masculin",
       "F": "Féminin",

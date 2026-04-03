@@ -166,6 +166,7 @@
     "no_data": "No responses recorded yet.",
     "logout": "Log out",
     "refresh": "Refresh",
+    "last_updated": "Last updated:",
     "gender_labels": {
       "M": "Male",
       "F": "Female",

@@ -84,6 +84,29 @@ function apiDownload(endpoint, filename) {
         });
 }
 
+// --- XSS protection ---
+
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// --- Last updated indicator ---
+
+function updateTimestamp() {
+    const el = document.getElementById("last-updated");
+    if (el) {
+        const now = new Date();
+        const time = now.toLocaleTimeString(currentLang === "fr" ? "fr-FR" : "en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        });
+        el.textContent = `${t("dashboard.last_updated")} ${time}`;
+    }
+}
+
 // --- Render dashboard ---
 
 async function loadStats() {
@@ -144,6 +167,7 @@ async function loadStats() {
         </div>`;
 
     contentEl.innerHTML = html;
+    updateTimestamp();
 
     // Bind export buttons
     document.getElementById("export-csv-btn").addEventListener("click", () => {
@@ -157,7 +181,7 @@ async function loadStats() {
 function buildStatSection(title, data, labels, total) {
     let rows = "";
     for (const [code, count] of Object.entries(data)) {
-        const label = (labels && labels[code]) || code;
+        const label = escapeHtml((labels && labels[code]) || code);
         const percent = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
         rows += `
             <tr>
