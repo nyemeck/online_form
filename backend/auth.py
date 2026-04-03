@@ -3,13 +3,16 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import os
+
+from database import get_db
+from models import Admin
 
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 24
 
@@ -18,13 +21,26 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 
-def verify_password(plain_password: str) -> bool:
-    return plain_password == ADMIN_PASSWORD
+def hash_password(plain_password: str) -> str:
+    return pwd_context.hash(plain_password)
 
 
-def create_access_token() -> str:
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    return pwd_context.verify(plain_password, password_hash)
+
+
+def authenticate_admin(username: str, password: str, db: Session) -> Admin | None:
+    admin = db.query(Admin).filter(Admin.username == username).first()
+    if not admin:
+        return None
+    if not verify_password(password, admin.password_hash):
+        return None
+    return admin
+
+
+def create_access_token(username: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(hours=TOKEN_EXPIRE_HOURS)
-    to_encode = {"sub": "admin", "exp": expire}
+    to_encode = {"sub": username, "exp": expire}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -37,7 +53,7 @@ def get_current_admin(token: str = Depends(oauth2_scheme)) -> str:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        if username != "admin":
+        if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception

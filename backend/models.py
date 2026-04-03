@@ -3,6 +3,14 @@ from datetime import datetime, timezone
 from database import Base
 
 
+class Admin(Base):
+    __tablename__ = "admins"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    username = Column(String, unique=True, nullable=False, index=True)
+    password_hash = Column(String, nullable=False)
+
+
 class Response(Base):
     __tablename__ = "responses"
 
