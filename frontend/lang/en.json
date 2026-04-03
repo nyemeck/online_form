@@ -144,5 +144,45 @@
       "title": "Final remark (optional)",
       "label": "Do you have any comments or suggestions regarding the functioning or performance of your university?"
     }
+  },
+  "login": {
+    "title": "Administrator area",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Log in",
+    "error": "Invalid username or password.",
+    "loading": "Logging in..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Response collection monitoring",
+    "total": "Total responses",
+    "by_gender": "Distribution by gender",
+    "by_status": "Distribution by status",
+    "by_language": "Distribution by language",
+    "export": "Export data",
+    "export_csv": "Download CSV",
+    "export_excel": "Download Excel",
+    "no_data": "No responses recorded yet.",
+    "logout": "Log out",
+    "refresh": "Refresh",
+    "gender_labels": {
+      "M": "Male",
+      "F": "Female",
+      "NR": "Prefer not to say"
+    },
+    "status_labels": {
+      "EC": "Lecturer-researcher",
+      "PA": "Administrative staff",
+      "RA": "Academic leader",
+      "ET": "Student",
+      "GOV": "Government (MINESUP, MINFI)",
+      "EPU": "Employer (public sector)",
+      "EPR": "Employer (private sector)"
+    },
+    "language_labels": {
+      "fr": "French",
+      "en": "English"
+    }
   }
 }

@@ -17,33 +17,36 @@
 - models.py : table responses (44 colonnes = 2 techniques + 42 items)
 - Sexe/Statut en String avec validation Enum prevue dans main.py
 
-### Etape 5 : Authentification admin [A MODIFIER]
-- auth.py : verification mot de passe, token JWT 24h
-- .env.example : modele pour les secrets
-- **Modification prevue** : passer de comparaison en clair a bcrypt + table admins en BDD
+### Etape 5 : Authentification admin [FAIT]
+- auth.py : hashage bcrypt, verification via BDD, token JWT 24h
+- .env.example : modele pour SECRET_KEY uniquement
 
-### Etape 5b : Gestion multi-admins [A FAIRE]
-- Ajout modele Admin dans models.py (table admins : id, username, password_hash)
-- Reecriture auth.py : hashage bcrypt, verification via BDD
-- Simplification .env.example : retrait ADMIN_PASSWORD (desormais en BDD)
-- Creation create_admin.py : script utilitaire pour ajouter un admin en ligne de commande
+### Etape 5b : Gestion multi-admins [FAIT]
+- Modele Admin dans models.py (table admins : id, username, password_hash)
+- create_admin.py : script utilitaire pour ajouter un admin en ligne de commande
 
 ---
 
-### Etape 6 : Serveur API principal [A FAIRE]
+### Etape 6 : Serveur API principal [FAIT]
 - main.py : endpoints FastAPI
   - POST /api/responses : recevoir une soumission du formulaire
   - POST /api/login : connexion admin
   - GET /api/stats : statistiques pour le dashboard (protege)
   - GET /api/export/csv : export CSV (protege)
   - GET /api/export/excel : export Excel (protege)
-- Validation Enum pour sexe et statut
-- Schemas Pydantic pour les donnees entrantes
+- Validation Enum avec codes i18n (M/F/NR, EC/PA/RA/ET/GOV/EPU/EPR)
+- Schemas Pydantic avec validation Likert 1-5
+
+### Etape 6b : Internationalisation (i18n) [FAIT]
+- Approche par codes neutres cote backend (M, F, EC, PA, etc.)
+- Dictionnaires de traduction : frontend/lang/fr.json et en.json
+- Structure extensible (ajout d'une langue = ajout d'un fichier JSON)
 
 ### Etape 7 : Frontend - Formulaire public [A FAIRE]
 - index.html : formulaire responsive avec toutes les sections A-G
 - css/style.css : mise en forme professionnelle, adaptee mobile
-- js/app.js : validation cote client, envoi des donnees a l'API
+- js/app.js : validation cote client, envoi des donnees, chargement i18n
+- Selecteur de langue FR / EN
 
 ### Etape 8 : Frontend - Espace admin [A FAIRE]
 - login.html : page de connexion admin

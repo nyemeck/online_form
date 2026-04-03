@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Université de Ngaoundéré</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+        }
+        .login-container {
+            max-width: 420px;
+            width: 100%;
+            padding: 0 16px;
+        }
+        .login-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .login-header {
+            background-color: #1a5632;
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
+        }
+        .login-header .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .login-header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .login-body {
+            padding: 28px 24px;
+        }
+        .login-field {
+            margin-bottom: 20px;
+        }
+        .login-field label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .login-field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+        .login-field input:focus {
+            outline: none;
+            border-color: #1a5632;
+            box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+        }
+        .login-btn {
+            width: 100%;
+            background-color: #1a5632;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .login-btn:hover {
+            background-color: #145028;
+        }
+        .login-btn:disabled {
+            background-color: #94b8a0;
+            cursor: not-allowed;
+        }
+        .login-error {
+            display: none;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .login-error.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="header-top">
+                    <div class="logo-placeholder" id="logo">
+                        <span class="logo-text">LOGO</span>
+                    </div>
+                    <div class="lang-switcher">
+                        <button class="lang-btn active" data-lang="fr">FR</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                </div>
+                <h1 data-i18n="login.title"></h1>
+            </div>
+            <div class="login-body">
+                <div class="login-error" id="login-error" data-i18n="login.error"></div>
+                <form id="login-form">
+                    <div class="login-field">
+                        <label for="username" data-i18n="login.username"></label>
+                        <input type="text" id="username" name="username" autocomplete="username" required>
+                    </div>
+                    <div class="login-field">
+                        <label for="password" data-i18n="login.password"></label>
+                        <input type="password" id="password" name="password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="login-btn" id="login-btn" data-i18n="login.submit"></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = "fr";
+        let translations = {};
+
+        async function loadTranslations(lang) {
+            const response = await fetch(`/static/lang/${lang}.json`);
+            translations = await response.json();
+            currentLang = lang;
+            applyTranslations();
+            updateLangButtons();
+        }
+
+        function getNestedValue(obj, path) {
+            return path.split(".").reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll("[data-i18n]").forEach((el) => {
+                const key = el.getAttribute("data-i18n");
+                const value = getNestedValue(translations, key);
+                if (value) {
+                    if (el.tagName === "INPUT") {
+                        el.placeholder = value;
+                    } else {
+                        el.textContent = value;
+                    }
+                }
+            });
+            document.documentElement.lang = currentLang;
+        }
+
+        function updateLangButtons() {
+            document.querySelectorAll(".lang-btn").forEach((btn) => {
+                btn.classList.toggle("active", btn.dataset.lang === currentLang);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadTranslations(currentLang);
+
+            document.querySelectorAll(".lang-btn").forEach((btn) => {
+                btn.addEventListener("click", () => loadTranslations(btn.dataset.lang));
+            });
+
+            document.getElementById("login-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById("login-btn");
+                const errorEl = document.getElementById("login-error");
+                errorEl.classList.remove("visible");
+                btn.disabled = true;
+                btn.textContent = getNestedValue(translations, "login.loading") || "...";
+
+                const formData = new URLSearchParams();
+                formData.append("username", document.getElementById("username").value);
+                formData.append("password", document.getElementById("password").value);
+
+                try {
+                    const response = await fetch("/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem("admin_token", data.access_token);
+                        localStorage.setItem("admin_lang", currentLang);
+                        window.location.href = "/dashboard";
+                    } else {
+                        errorEl.classList.add("visible");
+                        btn.disabled = false;
+                        btn.textContent = getNestedValue(translations, "login.submit");
+                    }
+                } catch (error) {
+                    errorEl.classList.add("visible");
+                    btn.disabled = false;
+                    btn.textContent = getNestedValue(translations, "login.submit");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
