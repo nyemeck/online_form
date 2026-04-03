@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "code": "en",
+    "label": "English"
+  },
+  "form": {
+    "title": "QUESTIONNAIRE",
+    "subtitle": "Organisational and managerial innovation and performance of the University of Ngaoundéré",
+    "intro": {
+      "heading": "Introduction for respondents",
+      "text": "This questionnaire is part of an academic research on organisational and managerial innovation and the performance of the University of Ngaoundéré.",
+      "anonymous": "Your answers are strictly anonymous and will be used solely for scientific purposes.",
+      "no_wrong": "There are no right or wrong answers: we invite you to express your personal perception.",
+      "duration": "Estimated duration: 10–15 minutes"
+    },
+    "scale": {
+      "instruction": "For each statement, please indicate your level of agreement using the following scale:",
+      "1": "Strongly disagree",
+      "2": "Somewhat disagree",
+      "3": "Neither agree nor disagree",
+      "4": "Somewhat agree",
+      "5": "Strongly agree"
+    },
+    "submit": "Submit my answers",
+    "required": "This field is required",
+    "success": "Thank you! Your response has been recorded successfully.",
+    "error": "An error occurred. Please try again."
+  },
+  "sections": {
+    "A": {
+      "title": "Section A – General information",
+      "subtitle": "(This information is used for statistical purposes only)",
+      "gender": {
+        "label": "Gender",
+        "options": {
+          "M": "Male",
+          "F": "Female",
+          "NR": "Prefer not to say"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "options": {
+          "EC": "Lecturer-researcher at the University of Ngaoundéré",
+          "PA": "Administrative staff at the University of Ngaoundéré",
+          "RA": "Academic / administrative leader (Rector, VP, SG, Deans, Directors, HoD)",
+          "ET": "Student at the University of Ngaoundéré",
+          "GOV": "Government (MINESUP, MINFI)",
+          "EPU": "Employer of graduates (public sector — MINFOPRA, GECAM, …)",
+          "EPR": "Employer of graduates (private sector)"
+        }
+      }
+    },
+    "B": {
+      "title": "Section B – Organisational innovation",
+      "items": {
+        "io1": "The university has reorganised its structures to improve its functioning.",
+        "io2": "Administrative procedures have been simplified compared to the past.",
+        "io3": "Academic processes are clearly formalised.",
+        "io4": "The university has introduced new digital management tools.",
+        "io5": "Coordination between faculties/schools has improved."
+      }
+    },
+    "C": {
+      "title": "Section C – Managerial innovation",
+      "items": {
+        "im1": "Leaders encourage new ways of managing the university.",
+        "im2": "Managers adopt a participatory management approach.",
+        "im3": "Important decisions are based on clear objectives.",
+        "im4": "The university experiments with new human resource management practices.",
+        "im5": "Leaders support innovative initiatives despite constraints."
+      }
+    },
+    "D": {
+      "title": "Section D – University governance",
+      "items": {
+        "g1": "Governance bodies function regularly.",
+        "g2": "Decisions made are effectively implemented.",
+        "g3": "Operating rules are clear and well known.",
+        "g4": "Communication between management and stakeholders is satisfactory.",
+        "g5": "The university has sufficient autonomy in its internal decisions."
+      }
+    },
+    "E": {
+      "title": "Section E – Stakeholder engagement",
+      "items": {
+        "e1": "I feel involved in the functioning of the university.",
+        "e2": "I actively participate in institutional activities.",
+        "e3": "I am willing to make extra efforts for the university.",
+        "e4": "I identify with the university's objectives.",
+        "e5": "I feel responsible for the overall performance of the university."
+      }
+    },
+    "F": {
+      "title": "Section F – Organisational learning capacity",
+      "items": {
+        "a1": "The university learns from its past experiences.",
+        "a2": "Mistakes are analysed to improve practices.",
+        "a3": "New directives are quickly implemented.",
+        "a4": "Stakeholders are encouraged to suggest improvements.",
+        "a5": "Training programmes genuinely help improve operations."
+      }
+    },
+    "G": {
+      "title": "Section G – University performance (public value approach)",
+      "G1": {
+        "title": "G1. Academic performance",
+        "items": {
+          "pa1": "The quality of teaching is satisfactory.",
+          "pa2": "Student supervision is adequate.",
+          "pa3": "Research activities meet national needs.",
+          "pa4": "Students' academic results are generally satisfactory."
+        }
+      },
+      "G2": {
+        "title": "G2. Organisational performance",
+        "items": {
+          "po1": "Administrative services function efficiently.",
+          "po2": "Internal procedures meet reasonable deadlines.",
+          "po3": "Resources are used efficiently.",
+          "po4": "Users are generally satisfied with the services."
+        }
+      },
+      "G3": {
+        "title": "G3. Societal and developmental performance",
+        "items": {
+          "ps1": "The university contributes to the development of society.",
+          "ps2": "Graduates integrate well into the local job market.",
+          "ps3": "The university meets the country's socio-economic needs.",
+          "ps4": "Access to the university is relatively equitable."
+        }
+      },
+      "G4": {
+        "title": "G4. Institutional performance (legitimacy)",
+        "items": {
+          "pi1": "The university enjoys a good image in society.",
+          "pi2": "Stakeholders trust the university.",
+          "pi3": "The university is perceived as useful to society.",
+          "pi4": "The university is stable and institutionally credible."
+        }
+      }
+    },
+    "comment": {
+      "title": "Final remark (optional)",
+      "label": "Do you have any comments or suggestions regarding the functioning or performance of your university?"
+    }
+  }
+}
