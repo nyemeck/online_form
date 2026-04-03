@@ -1,0 +1,524 @@
+/* ========================================
+   Research Form - University of Ngaoundere
+   ======================================== */
+
+/* --- Reset & Base --- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #2c3e50;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* --- Container --- */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+/* --- Header --- */
+
+.form-header {
+    background-color: #1a5632;
+    color: #ffffff;
+    padding: 24px 28px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.logo-placeholder {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-placeholder img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+.form-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.form-header .subtitle {
+    font-size: 0.95rem;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* --- Language switcher --- */
+
+.lang-switcher {
+    display: flex;
+    gap: 4px;
+}
+
+.lang-btn {
+    padding: 6px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.lang-btn.active {
+    background-color: #ffffff;
+    color: #1a5632;
+    border-color: #ffffff;
+}
+
+/* --- Intro section --- */
+
+.intro-section {
+    background-color: #ffffff;
+    padding: 24px 28px;
+    border-left: 4px solid #1a5632;
+}
+
+.intro-section h2 {
+    font-size: 1.2rem;
+    color: #1a5632;
+    margin-bottom: 12px;
+}
+
+.intro-section p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.duration {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* --- Scale legend --- */
+
+.scale-legend {
+    background-color: #eef3e8;
+    padding: 16px 28px;
+    border-left: 4px solid #1a5632;
+}
+
+.scale-legend p {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.scale-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.scale-items span {
+    padding: 2px 0;
+}
+
+/* --- Form sections --- */
+
+.form-section {
+    background-color: #ffffff;
+    margin-top: 16px;
+    padding: 24px 28px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.form-section h2 {
+    font-size: 1.15rem;
+    color: #1a5632;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+}
+
+.form-section h3 {
+    font-size: 1rem;
+    color: #2c6e3f;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.section-subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    font-style: italic;
+    margin-top: -10px;
+    margin-bottom: 16px;
+}
+
+/* --- Radio groups (Section A) --- */
+
+fieldset {
+    border: none;
+    margin-bottom: 20px;
+}
+
+fieldset legend {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.radio-group-vertical {
+    flex-direction: column;
+    gap: 8px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.radio-group label:hover {
+    background-color: #f0f7f0;
+    border-color: #1a5632;
+}
+
+.radio-group input[type="radio"] {
+    accent-color: #1a5632;
+    width: 16px;
+    height: 16px;
+}
+
+.radio-group input[type="radio"]:checked + span {
+    font-weight: 600;
+    color: #1a5632;
+}
+
+/* --- Likert tables --- */
+
+.likert-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.likert-table thead th {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    text-align: center;
+    border-bottom: 2px solid #1a5632;
+}
+
+.likert-table thead th:first-child {
+    text-align: left;
+    width: 55%;
+}
+
+.likert-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.15s ease;
+}
+
+.likert-table tbody tr:hover {
+    background-color: #f8faf5;
+}
+
+.likert-table tbody tr.has-error {
+    background-color: #fef2f2;
+}
+
+.likert-table tbody td {
+    padding: 12px 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.likert-table tbody td:first-child {
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.likert-table tbody td .item-code {
+    display: inline-block;
+    font-weight: 700;
+    color: #1a5632;
+    min-width: 32px;
+    margin-right: 6px;
+    font-size: 0.8rem;
+}
+
+.likert-table input[type="radio"] {
+    accent-color: #1a5632;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* --- Textarea (comment) --- */
+
+.form-section label[for="comment"] {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #1a5632;
+    box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+}
+
+/* --- Error messages --- */
+
+.error-msg {
+    display: none;
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 6px;
+}
+
+.error-msg.visible {
+    display: block;
+}
+
+/* --- Submit button --- */
+
+.form-actions {
+    margin-top: 24px;
+    text-align: center;
+}
+
+#submit-btn {
+    background-color: #1a5632;
+    color: #ffffff;
+    border: none;
+    padding: 14px 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+}
+
+#submit-btn:hover {
+    background-color: #145028;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 86, 50, 0.3);
+}
+
+#submit-btn:active {
+    transform: translateY(0);
+}
+
+#submit-btn:disabled {
+    background-color: #94b8a0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Success / Error messages --- */
+
+.message {
+    margin-top: 24px;
+    padding: 20px 28px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.hidden {
+    display: none;
+}
+
+/* --- Progress indicator --- */
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background-color: #1a5632;
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 12px 8px 32px;
+    }
+
+    .form-header {
+        padding: 16px;
+    }
+
+    .form-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .header-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .logo-placeholder {
+        width: 60px;
+        height: 60px;
+    }
+
+    .intro-section,
+    .scale-legend,
+    .form-section {
+        padding: 16px;
+    }
+
+    /* Likert: switch to card layout on mobile */
+    .likert-table table,
+    .likert-table thead,
+    .likert-table tbody,
+    .likert-table th,
+    .likert-table td,
+    .likert-table tr {
+        display: block;
+    }
+
+    .likert-table thead {
+        display: none;
+    }
+
+    .likert-table tbody tr {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .likert-table tbody td:first-child {
+        font-weight: 500;
+        margin-bottom: 8px;
+        padding: 0;
+    }
+
+    .likert-table tbody td {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        font-size: 0.85rem;
+    }
+
+    .likert-table tbody td::before {
+        content: attr(data-label);
+        font-size: 0.75rem;
+        color: #888;
+    }
+
+    .radio-group label {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    #submit-btn {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-header h1 {
+        font-size: 1rem;
+    }
+
+    .form-header .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .form-section h2 {
+        font-size: 1rem;
+    }
+}

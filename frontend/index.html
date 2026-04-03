@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire - Université de Ngaoundéré</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="form-header">
+            <div class="header-top">
+                <div class="logo-placeholder" id="logo">
+                    <!-- Logo will be placed here -->
+                    <span class="logo-text">LOGO</span>
+                </div>
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+            <h1 data-i18n="form.title"></h1>
+            <p class="subtitle" data-i18n="form.subtitle"></p>
+        </header>
+
+        <!-- Introduction -->
+        <section class="intro-section">
+            <h2 data-i18n="form.intro.heading"></h2>
+            <p data-i18n="form.intro.text"></p>
+            <p><strong data-i18n="form.intro.anonymous"></strong></p>
+            <p><em data-i18n="form.intro.no_wrong"></em></p>
+            <p class="duration" data-i18n="form.intro.duration"></p>
+        </section>
+
+        <!-- Likert scale legend -->
+        <section class="scale-legend">
+            <p data-i18n="form.scale.instruction"></p>
+            <div class="scale-items">
+                <span><strong>1</strong> — <span data-i18n="form.scale.1"></span></span>
+                <span><strong>2</strong> — <span data-i18n="form.scale.2"></span></span>
+                <span><strong>3</strong> — <span data-i18n="form.scale.3"></span></span>
+                <span><strong>4</strong> — <span data-i18n="form.scale.4"></span></span>
+                <span><strong>5</strong> — <span data-i18n="form.scale.5"></span></span>
+            </div>
+        </section>
+
+        <!-- Form -->
+        <form id="survey-form" novalidate>
+
+            <!-- Section A - General information -->
+            <section class="form-section">
+                <h2 data-i18n="sections.A.title"></h2>
+                <p class="section-subtitle" data-i18n="sections.A.subtitle"></p>
+
+                <!-- Gender -->
+                <fieldset class="field-group">
+                    <legend data-i18n="sections.A.gender.label"></legend>
+                    <div class="radio-group" id="gender-group">
+                        <label>
+                            <input type="radio" name="gender" value="M" required>
+                            <span data-i18n="sections.A.gender.options.M"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="F">
+                            <span data-i18n="sections.A.gender.options.F"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="NR">
+                            <span data-i18n="sections.A.gender.options.NR"></span>
+                        </label>
+                    </div>
+                    <span class="error-msg" data-error="gender"></span>
+                </fieldset>
+
+                <!-- Status -->
+                <fieldset class="field-group">
+                    <legend data-i18n="sections.A.status.label"></legend>
+                    <div class="radio-group radio-group-vertical" id="status-group">
+                        <label>
+                            <input type="radio" name="status" value="EC" required>
+                            <span data-i18n="sections.A.status.options.EC"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="PA">
+                            <span data-i18n="sections.A.status.options.PA"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="RA">
+                            <span data-i18n="sections.A.status.options.RA"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="ET">
+                            <span data-i18n="sections.A.status.options.ET"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="GOV">
+                            <span data-i18n="sections.A.status.options.GOV"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="EPU">
+                            <span data-i18n="sections.A.status.options.EPU"></span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="EPR">
+                            <span data-i18n="sections.A.status.options.EPR"></span>
+                        </label>
+                    </div>
+                    <span class="error-msg" data-error="status"></span>
+                </fieldset>
+            </section>
+
+            <!-- Section B - Organisational innovation -->
+            <section class="form-section">
+                <h2 data-i18n="sections.B.title"></h2>
+                <div class="likert-table" data-section="B"
+                     data-items="io1,io2,io3,io4,io5">
+                </div>
+            </section>
+
+            <!-- Section C - Managerial innovation -->
+            <section class="form-section">
+                <h2 data-i18n="sections.C.title"></h2>
+                <div class="likert-table" data-section="C"
+                     data-items="im1,im2,im3,im4,im5">
+                </div>
+            </section>
+
+            <!-- Section D - University governance -->
+            <section class="form-section">
+                <h2 data-i18n="sections.D.title"></h2>
+                <div class="likert-table" data-section="D"
+                     data-items="g1,g2,g3,g4,g5">
+                </div>
+            </section>
+
+            <!-- Section E - Stakeholder engagement -->
+            <section class="form-section">
+                <h2 data-i18n="sections.E.title"></h2>
+                <div class="likert-table" data-section="E"
+                     data-items="e1,e2,e3,e4,e5">
+                </div>
+            </section>
+
+            <!-- Section F - Organisational learning capacity -->
+            <section class="form-section">
+                <h2 data-i18n="sections.F.title"></h2>
+                <div class="likert-table" data-section="F"
+                     data-items="a1,a2,a3,a4,a5">
+                </div>
+            </section>
+
+            <!-- Section G - University performance -->
+            <section class="form-section">
+                <h2 data-i18n="sections.G.title"></h2>
+
+                <!-- G1 - Academic performance -->
+                <h3 data-i18n="sections.G.G1.title"></h3>
+                <div class="likert-table" data-section="G" data-subsection="G1"
+                     data-items="pa1,pa2,pa3,pa4">
+                </div>
+
+                <!-- G2 - Organisational performance -->
+                <h3 data-i18n="sections.G.G2.title"></h3>
+                <div class="likert-table" data-section="G" data-subsection="G2"
+                     data-items="po1,po2,po3,po4">
+                </div>
+
+                <!-- G3 - Societal performance -->
+                <h3 data-i18n="sections.G.G3.title"></h3>
+                <div class="likert-table" data-section="G" data-subsection="G3"
+                     data-items="ps1,ps2,ps3,ps4">
+                </div>
+
+                <!-- G4 - Institutional performance -->
+                <h3 data-i18n="sections.G.G4.title"></h3>
+                <div class="likert-table" data-section="G" data-subsection="G4"
+                     data-items="pi1,pi2,pi3,pi4">
+                </div>
+            </section>
+
+            <!-- Final comment -->
+            <section class="form-section">
+                <h2 data-i18n="sections.comment.title"></h2>
+                <label for="comment" data-i18n="sections.comment.label"></label>
+                <textarea id="comment" name="comment" rows="5"></textarea>
+            </section>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" id="submit-btn" data-i18n="form.submit"></button>
+            </div>
+        </form>
+
+        <!-- Success message (hidden by default) -->
+        <div id="success-message" class="message success hidden">
+            <p data-i18n="form.success"></p>
+        </div>
+
+        <!-- Error message (hidden by default) -->
+        <div id="error-message" class="message error hidden">
+            <p data-i18n="form.error"></p>
+        </div>
+
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
