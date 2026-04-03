@@ -17,9 +17,16 @@
 - models.py : table responses (44 colonnes = 2 techniques + 42 items)
 - Sexe/Statut en String avec validation Enum prevue dans main.py
 
-### Etape 5 : Authentification admin [FAIT]
+### Etape 5 : Authentification admin [A MODIFIER]
 - auth.py : verification mot de passe, token JWT 24h
 - .env.example : modele pour les secrets
+- **Modification prevue** : passer de comparaison en clair a bcrypt + table admins en BDD
+
+### Etape 5b : Gestion multi-admins [A FAIRE]
+- Ajout modele Admin dans models.py (table admins : id, username, password_hash)
+- Reecriture auth.py : hashage bcrypt, verification via BDD
+- Simplification .env.example : retrait ADMIN_PASSWORD (desormais en BDD)
+- Creation create_admin.py : script utilitaire pour ajouter un admin en ligne de commande
 
 ---
 
