@@ -1,6 +1,6 @@
 # Guide de deploiement — VPS Hostinger
 
-> Derniere mise a jour : 2026-04-07
+> Derniere mise a jour : 2026-04-08
 > Serveur : 72.62.50.19 (srv1163941.hstgr.cloud)
 
 ## Vue d'ensemble
@@ -12,7 +12,7 @@ Repondant (navigateur)
       |
   VPS (72.62.50.19)
       |
-  Traefik (ports 80/443) -- Reverse proxy + SSL
+  Traefik (ports 80/443) -- Reverse proxy + SSL automatique
       |
   Uvicorn/FastAPI (port 8000) -- Application
       |
@@ -26,11 +26,11 @@ Repondant (navigateur)
 | 1   | Verifier l'etat du serveur | Fait         |
 | 2   | Installer les prerequis    | Fait         |
 | 3   | Transferer le code         | Fait         |
-| 4   | Configurer l'application   | En cours     |
-| 5   | Configurer Systemd         | A faire      |
-| 6   | Configurer Traefik         | A faire      |
-| 7   | Configurer le pare-feu     | A faire      |
-| 8   | SSL (HTTPS)                | A faire      |
+| 4   | Configurer l'application   | Fait         |
+| 5   | Configurer Systemd         | Fait         |
+| 6   | Configurer Traefik         | Fait         |
+| 7   | Configurer le pare-feu     | Fait         |
+| 8   | SSL (HTTPS)                | Fait (via Traefik) |
 
 ---
 
@@ -150,7 +150,7 @@ sudo chown -R elzouave:elzouave /srv/online_form
 
 ## Etape 4 — Configurer l'application
 
-**Pourquoi** : Creer l'environnement Python, installer les dependances, configurer les variables d'environnement.
+**Pourquoi** : Creer l'environnement Python, installer les dependances, configurer les variables et le compte admin.
 
 ```bash
 # Creer le venv et installer les dependances
@@ -159,14 +159,15 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r backend/requirements.txt
 
-# Creer le fichier .env
-# (commandes a completer)
+# Generer la SECRET_KEY et creer le .env
+cd /srv/online_form/backend
+echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
 
-# Creer le compte admin
-# (commandes a completer)
+# Creer le premier compte admin
+cd /srv/online_form
+python3 backend/manage_admin.py create admin
+# Le mot de passe est demande de maniere masquee (min. 8 caracteres)
 ```
-
-> **Statut : En cours**
 
 ---
 
@@ -174,30 +175,293 @@ pip install -r backend/requirements.txt
 
 **Pourquoi** : Pour que l'application demarre automatiquement et redemarre en cas de crash.
 
-> **Statut : A faire**
+### 5.1 Creer le fichier de service
+
+```bash
+sudo nano /etc/systemd/system/online-form.service
+```
+
+Contenu :
+```ini
+[Unit]
+Description=Online Form - FastAPI (Universite de Ngaoundere)
+After=network.target
+
+[Service]
+User=elzouave
+Group=elzouave
+WorkingDirectory=/srv/online_form/backend
+ExecStart=/srv/online_form/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+Environment="PATH=/srv/online_form/venv/bin"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+> **Note** : `--host 0.0.0.0` est necessaire car Traefik (dans Docker) accede a FastAPI
+> via l'interface bridge Docker (172.17.0.1). Avec `127.0.0.1`, Traefik ne peut pas
+> joindre l'application et retourne "Bad Gateway".
+
+### 5.2 Activer et demarrer le service
+
+```bash
+sudo systemctl daemon-reload    # Relit les fichiers de service
+sudo systemctl enable online-form  # Demarrage automatique au boot
+sudo systemctl start online-form   # Demarrer maintenant
+```
+
+### 5.3 Verifier
+
+```bash
+sudo systemctl status online-form
+# → active (running)
+
+curl http://127.0.0.1:8000
+# → HTML du formulaire
+```
 
 ---
 
 ## Etape 6 — Configurer Traefik
 
-**Pourquoi** : Pour exposer l'application sur internet via HTTPS.
+**Pourquoi** : Pour exposer l'application sur internet via HTTPS. Traefik est deja en place
+(il gere n8n), on ajoute un routage pour FastAPI.
 
-> **Statut : A faire**
-> Note : On utilise Traefik (deja en place) au lieu de Nginx.
+**Probleme** : Traefik tourne dans Docker, FastAPI tourne sur le host (Systemd).
+Traefik ne peut pas acceder directement a `127.0.0.1:8000` du host depuis son conteneur.
+
+**Solution** : Utiliser l'IP du bridge Docker (`172.17.0.1`) pour que Traefik atteigne le host,
+et un fichier de configuration (file provider) pour definir le routage.
+
+### 6.1 Creer le fichier de routage
+
+```bash
+sudo mkdir -p /root/traefik-config
+sudo nano /root/traefik-config/online-form.yml
+```
+
+Contenu :
+```yaml
+http:
+  routers:
+    online-form:
+      rule: "Host(`form.srv1163941.hstgr.cloud`)"
+      entryPoints:
+        - web
+        - websecure
+      service: online-form
+      tls:
+        certResolver: mytlschallenge
+  services:
+    online-form:
+      loadBalancer:
+        servers:
+          - url: "http://172.17.0.1:8000"
+```
+
+> **Important** : L'URL est `172.17.0.1` (IP du host vu depuis Docker), pas `127.0.0.1`.
+> Pour trouver cette IP : `ip addr show docker0 | grep inet`
+
+### 6.2 Modifier le docker-compose.yml
+
+```bash
+sudo nano /root/docker-compose.yml
+```
+
+Ajouter 4 elements au bloc `traefik` :
+
+**a)** Dans `command:`, apres `--providers.docker.exposedbydefault=false` :
+```yaml
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+```
+
+**b)** Apres le bloc `ports:` :
+```yaml
+    extra_hosts:
+      - "host-gateway:host-gateway"
+```
+
+**c)** Dans `volumes:`, ajouter :
+```yaml
+      - /root/traefik-config:/etc/traefik/dynamic:ro
+```
+
+### 6.3 Redemarrer Traefik
+
+```bash
+sudo bash -c "cd /root && docker compose down && docker compose up -d"
+```
+
+> **Note** : On utilise `sudo bash -c` car `/root` n'est pas accessible a l'utilisateur elzouave.
+
+### 6.4 Verifier
+
+```bash
+# Verifier que les conteneurs tournent
+sudo docker ps
+# → root-traefik-1 et root-n8n-1 en "Up"
+
+# Tester l'acces depuis le VPS
+curl -k https://form.srv1163941.hstgr.cloud
+# → HTML du formulaire
+
+# Tester dans le navigateur
+# → https://form.srv1163941.hstgr.cloud
+```
+
+### 6.5 Troubleshooting — "Bad Gateway"
+
+Si `curl` retourne `Bad Gateway`, voici les etapes de diagnostic :
+
+```bash
+# 1. Verifier que FastAPI tourne
+sudo systemctl status online-form
+curl http://127.0.0.1:8000
+
+# 2. Verifier que Traefik lit le fichier de config
+sudo docker exec root-traefik-1 ls /etc/traefik/dynamic/
+# → doit afficher online-form.yml
+
+# 3. Verifier le contenu du fichier dans le conteneur
+sudo docker exec root-traefik-1 cat /etc/traefik/dynamic/online-form.yml
+# → verifier que l'URL du serveur est presente et correcte (172.17.0.1, pas 127.17.0.1)
+
+# 4. Tester la connectivite depuis Traefik vers FastAPI
+sudo docker exec root-traefik-1 wget -qO- http://172.17.0.1:8000
+# → doit retourner le HTML du formulaire
+
+# 5. Verifier les logs Traefik
+sudo docker logs root-traefik-1 2>&1 | tail -20
+
+# 6. Curl verbeux pour plus de details
+curl -kv https://form.srv1163941.hstgr.cloud 2>&1 | tail -20
+```
+
+**Erreurs courantes :**
+
+| Symptome | Cause | Solution |
+|----------|-------|----------|
+| Bad Gateway | FastAPI ecoute sur 127.0.0.1 | Changer `--host` en `0.0.0.0` dans le service Systemd |
+| Bad Gateway | Mauvaise IP dans online-form.yml | Verifier : `172.17.0.1` (pas `127.17.0.1`) |
+| Bad Gateway | Section `servers` vide dans le YAML | Probleme d'indentation — recreer le fichier |
+| 404 Not Found | Le sous-domaine ne matche pas | Verifier la `rule` dans online-form.yml |
 
 ---
 
-## Etape 7 — Configurer le pare-feu
+## Etape 7 — Configurer le pare-feu (ufw)
 
-**Pourquoi** : Ouvrir uniquement les ports necessaires (22, 80, 443).
+**Pourquoi** : Sans pare-feu, tous les ports sont accessibles depuis internet. Par exemple,
+quelqu'un pourrait acceder directement a `http://72.62.50.19:8000` et contourner Traefik (pas de SSL).
+Le pare-feu limite l'acces aux seuls ports necessaires.
 
-> **Statut : A faire**
+### 7.1 Ouvrir les ports necessaires et activer
+
+```bash
+# Autoriser SSH (CRITIQUE — sinon on perd l'acces au serveur)
+sudo ufw allow 22/tcp
+
+# Autoriser HTTP et HTTPS (pour Traefik)
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Activer le pare-feu (taper 'y' pour confirmer)
+sudo ufw enable
+```
+
+### 7.2 Autoriser Docker a atteindre FastAPI
+
+Apres activation de ufw, Traefik (dans Docker) ne peut plus joindre FastAPI sur le port 8000
+car le trafic est bloque. Docker utilise des reseaux internes (bridges) dont les IPs
+peuvent varier.
+
+```bash
+# Autoriser le reseau Docker bridge par defaut (docker0)
+sudo ufw allow from 172.17.0.0/16 to any port 8000
+
+# Autoriser le reseau Docker Compose (utilise par Traefik)
+# Traefik accede depuis 172.18.0.x, pas 172.17.0.x
+sudo ufw allow from 172.18.0.0/16 to any port 8000
+
+# Autoriser le trafic route (necessaire pour Docker)
+sudo ufw default allow routed
+```
+
+> **Comment on a trouve ces IPs** : Les logs Uvicorn montrent l'IP source des requetes
+> de Traefik (`172.18.0.3`). On peut aussi verifier avec :
+> `ip addr show docker0 | grep inet` → `172.17.0.1`
+> `docker network inspect root_default | grep Subnet` → `172.18.0.0/16`
+
+### 7.3 Verifier
+
+```bash
+sudo ufw status verbose
+```
+
+Resultat attendu :
+```
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), allow (routed)
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    Anywhere
+80/tcp                     ALLOW IN    Anywhere
+443/tcp                    ALLOW IN    Anywhere
+8000                       ALLOW IN    172.17.0.0/16
+8000                       ALLOW IN    172.18.0.0/16
+22/tcp (v6)                ALLOW IN    Anywhere (v6)
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+```
+
+Tester que tout fonctionne :
+```bash
+# Via Traefik (doit fonctionner)
+curl -k https://form.srv1163941.hstgr.cloud
+
+# Depuis le Mac — acces direct au port 8000 (doit echouer/timeout)
+# curl -m 5 http://72.62.50.19:8000
+```
+
+### 7.4 Troubleshooting — "Gateway Timeout" apres activation de ufw
+
+**Signification** : Traefik recoit la requete mais le pare-feu bloque la connexion vers FastAPI.
+
+**Etapes de diagnostic :**
+
+```bash
+# 1. Verifier les regles ufw
+sudo ufw status verbose
+# → Verifier que les reseaux Docker sont autorises sur le port 8000
+
+# 2. Verifier depuis quel IP Traefik accede a FastAPI
+sudo journalctl -u online-form -n 20
+# → Les logs Uvicorn montrent l'IP source (ex: 172.18.0.3)
+
+# 3. Tester la connectivite depuis Traefik
+sudo docker exec root-traefik-1 wget -qO- http://172.17.0.1:8000
+# → Si ca tourne indefiniment, le pare-feu bloque
+
+# 4. Verifier la politique de routage
+sudo ufw status verbose | grep routed
+# → Doit etre "allow (routed)", pas "deny (routed)"
+```
+
+**Causes courantes :**
+
+| Symptome | Cause | Solution |
+|----------|-------|----------|
+| Gateway Timeout | Reseau Docker non autorise | `sudo ufw allow from 172.18.0.0/16 to any port 8000` |
+| Gateway Timeout | Trafic route bloque | `sudo ufw default allow routed` |
+| Gateway Timeout | Docker utilise un autre reseau | Verifier les logs Uvicorn pour l'IP source, puis autoriser le bon sous-reseau |
 
 ---
 
 ## Etape 8 — SSL (HTTPS)
 
-**Pourquoi** : Securiser la connexion avec un certificat Let's Encrypt.
-
-> **Statut : A faire**
-> Note : Traefik gere deja le SSL automatiquement — cette etape sera probablement integree a l'etape 6.
+**Statut : Fait** — Traefik gere automatiquement les certificats Let's Encrypt via le `certResolver: mytlschallenge`.
+Le certificat est genere automatiquement lors du premier acces a `https://form.srv1163941.hstgr.cloud`.

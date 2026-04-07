@@ -41,8 +41,9 @@ online_form/
 │   ├── .env                 # Variables d'environnement (SECRET_KEY, ADMIN_PASSWORD)
 │   └── requirements.txt     # Dependances Python
 ├── docs/
-│   ├── SERVER.md            # Documentation du serveur VPS (architecture, services, config)
+│   ├── INFRASTRUCTURE.md    # Infrastructure VPS (OS, Docker, Traefik, reseau, cles SSH)
 │   ├── DEPLOYMENT.md        # Guide de deploiement etape par etape avec commandes
+│   ├── RUNBOOK.md           # Procedures operationnelles (systemd, logs, mises a jour, admins)
 │   ├── Questionnaire 3.pdf  # Questionnaire original de la recherche
 │   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Mandat officiel du Recteur
 ├── frontend/

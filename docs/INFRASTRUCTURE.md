@@ -1,6 +1,6 @@
-# Documentation Serveur VPS — Hostinger
+# Infrastructure — VPS Hostinger
 
-> Derniere mise a jour : 2026-04-07
+> Derniere mise a jour : 2026-04-08
 
 ## 1. Informations systeme
 
@@ -20,7 +20,7 @@
 |--------------------|--------------|
 | **Utilisateur SSH**| elzouave     |
 | **Droits sudo**    | Oui          |
-| **Pare-feu (ufw)** | Inactif     |
+| **Pare-feu (ufw)** | Actif (22, 80, 443 ouverts + Docker autorise) |
 
 ## 3. Logiciels installes
 
@@ -34,12 +34,13 @@
 | Docker Compose | 5.0.2     | Plugin Docker (v2)                              |
 | Nginx          | —         | Installe mais **inactif** (conflit port 80 avec Traefik) |
 
-## 4. Services actifs (Docker)
+## 4. Services actifs
 
-Tous les services tournent via Docker Compose depuis `/root/docker-compose.yml`.
+### 4.1 Services Docker (via `/root/docker-compose.yml`)
+
 Variables d'environnement dans `/root/.env`.
 
-### 4.1 Traefik (reverse proxy)
+#### Traefik (reverse proxy)
 
 | Element              | Valeur                                    |
 |----------------------|-------------------------------------------|
@@ -50,10 +51,11 @@ Variables d'environnement dans `/root/.env`.
 | **SSL**              | Let's Encrypt (TLS challenge, automatique)|
 | **Email ACME**       | user@srv1163941.hstgr.cloud               |
 | **Stockage certs**   | Volume `traefik_data` → /letsencrypt      |
-| **Provider**         | Docker (decouverte auto via labels)       |
+| **Providers**        | Docker (labels) + File (`/root/traefik-config/`) |
 | **Redirection HTTP** | Oui (80 → 443 automatique)               |
+| **Config dynamique** | `/root/traefik-config/` monte en lecture seule |
 
-### 4.2 n8n (automatisation workflows)
+#### n8n (automatisation workflows)
 
 | Element           | Valeur                                     |
 |-------------------|--------------------------------------------|
@@ -64,6 +66,21 @@ Variables d'environnement dans `/root/.env`.
 | **Donnees**       | Volume `n8n_data` → /home/node/.n8n        |
 | **Fichiers**      | /local-files → /files                      |
 | **Timezone**      | Europe/Berlin                              |
+
+### 4.2 Services Systemd
+
+#### online-form (FastAPI)
+
+| Element           | Valeur                                           |
+|-------------------|--------------------------------------------------|
+| **Fichier**       | `/etc/systemd/system/online-form.service`        |
+| **Utilisateur**   | elzouave                                         |
+| **Repertoire**    | `/srv/online_form/backend`                       |
+| **Commande**      | uvicorn main:app --host 0.0.0.0 --port 8000     |
+| **Port**          | 8000 (toutes interfaces)                         |
+| **URL publique**  | https://form.srv1163941.hstgr.cloud              |
+| **Redemarrage**   | Automatique (5s apres crash)                     |
+| **Boot**          | Actif (enabled)                                  |
 
 ## 5. Architecture reseau
 
@@ -78,28 +95,28 @@ Traefik (Docker, ports 80/443)
   |-- HTTPS redirect automatique
   |-- SSL Let's Encrypt
   |
-  |-- Host: n8n.srv1163941.hstgr.cloud --> n8n (port 5678)
-  |-- Host: [a configurer]             --> FastAPI (port 8000)
-      |
-      v
-Nginx (installe, inactif — non utilise)
+  |-- Host: n8n.srv1163941.hstgr.cloud  --> n8n (Docker, port 5678)
+  |-- Host: form.srv1163941.hstgr.cloud --> FastAPI (Systemd, port 8000 via 172.17.0.1)
 ```
+
+> **Note** : Traefik (dans Docker) atteint FastAPI (sur le host) via l'IP du bridge Docker
+> `172.17.0.1`. C'est configure dans `/root/traefik-config/online-form.yml`.
 
 ## 6. Ports utilises
 
-| Port | Protocole | Utilise par       | Acces          |
-|------|-----------|-------------------|----------------|
-| 22   | TCP       | SSH               | Externe        |
-| 80   | TCP       | Traefik (Docker)  | Externe        |
-| 443  | TCP       | Traefik (Docker)  | Externe        |
-| 5678 | TCP       | n8n (Docker)      | 127.0.0.1 only |
-| 8000 | TCP       | FastAPI (a venir) | A configurer   |
+| Port | Protocole | Utilise par       | Acces              |
+|------|-----------|-------------------|--------------------|
+| 22   | TCP       | SSH               | Externe            |
+| 80   | TCP       | Traefik (Docker)  | Externe            |
+| 443  | TCP       | Traefik (Docker)  | Externe            |
+| 5678 | TCP       | n8n (Docker)      | 127.0.0.1 only     |
+| 8000 | TCP       | FastAPI (Systemd) | Docker uniquement (172.17.0.0/16, 172.18.0.0/16) |
 
 ## 7. Applications deployees
 
-| Application  | Emplacement              | Depot GitHub                         | Methode de deploy |
-|--------------|--------------------------|--------------------------------------|--------------------|
-| online_form  | `/srv/online_form`       | nyemeck/online_form (prive)          | Deploy key SSH (lecture seule) |
+| Application  | Emplacement        | Depot GitHub                | Methode de deploy              | URL publique                          |
+|--------------|--------------------|------------------------------|--------------------------------|---------------------------------------|
+| online_form  | `/srv/online_form` | nyemeck/online_form (prive) | Deploy key SSH (lecture seule) | https://form.srv1163941.hstgr.cloud   |
 
 ## 8. Cles SSH
 
@@ -110,11 +127,14 @@ Nginx (installe, inactif — non utilise)
 
 ## 9. Fichiers de configuration cles
 
-| Fichier                    | Contenu                                      |
-|----------------------------|----------------------------------------------|
-| `/root/docker-compose.yml` | Definition des services Traefik + n8n         |
-| `/root/.env`               | Variables : DOMAIN_NAME, SUBDOMAIN, SSL_EMAIL |
-| `~/.ssh/config`            | Alias SSH pour deploy key GitHub              |
+| Fichier                              | Contenu                                       |
+|--------------------------------------|-----------------------------------------------|
+| `/root/docker-compose.yml`           | Definition des services Traefik + n8n          |
+| `/root/.env`                         | Variables : DOMAIN_NAME, SUBDOMAIN, SSL_EMAIL  |
+| `/root/traefik-config/online-form.yml` | Routage Traefik → FastAPI (172.17.0.1:8000)  |
+| `/etc/systemd/system/online-form.service` | Service Systemd pour FastAPI              |
+| `/srv/online_form/backend/.env`      | SECRET_KEY pour JWT                            |
+| `~/.ssh/config`                      | Alias SSH pour deploy key GitHub               |
 
 ## 10. Volumes Docker
 
@@ -126,7 +146,8 @@ Nginx (installe, inactif — non utilise)
 ## 11. Points d'attention
 
 - **Pas de swap** : En cas de pic memoire, le systeme peut tuer des processus (OOM killer)
-- **Pare-feu inactif** : Tous les ports sont ouverts — a securiser avant mise en production
+- **Pare-feu actif** : Seuls les ports 22, 80, 443 sont ouverts. Port 8000 restreint aux reseaux Docker
 - **Nginx installe mais inutilise** : Traefik remplit deja le role de reverse proxy
 - **1 seul vCPU** : Limiter le nombre de workers Uvicorn en consequence
 - **Traefik gere le SSL** : Pas besoin de Certbot separement
+- **FastAPI ecoute sur 0.0.0.0** : Necessaire pour le bridge Docker. Le pare-feu bloque l'acces direct au port 8000 depuis l'exterieur
