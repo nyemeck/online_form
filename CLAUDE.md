@@ -40,6 +40,7 @@ online_form/
 │   ├── .env                 # Variables d'environnement (SECRET_KEY, ADMIN_PASSWORD)
 │   └── requirements.txt     # Dependances Python
 ├── docs/
+│   ├── SERVER.md            # Documentation du serveur VPS (architecture, services, config)
 │   ├── Questionnaire 3.pdf  # Questionnaire original de la recherche
 │   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Mandat officiel du Recteur
 ├── frontend/
