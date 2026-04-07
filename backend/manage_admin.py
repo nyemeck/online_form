@@ -31,16 +31,20 @@ def list_admins():
 
 
 def prompt_password():
-    while True:
-        password = getpass.getpass("Mot de passe : ")
-        if len(password) < 8:
-            print("Le mot de passe doit contenir au moins 8 caracteres.")
-            continue
-        confirm = getpass.getpass("Confirmer le mot de passe : ")
-        if password != confirm:
-            print("Les mots de passe ne correspondent pas.")
-            continue
-        return password
+    try:
+        while True:
+            password = getpass.getpass("Mot de passe : ")
+            if len(password) < 8:
+                print("Le mot de passe doit contenir au moins 8 caracteres.")
+                continue
+            confirm = getpass.getpass("Confirmer le mot de passe : ")
+            if password != confirm:
+                print("Les mots de passe ne correspondent pas.")
+                continue
+            return password
+    except KeyboardInterrupt:
+        print("\nOperation annulee.")
+        sys.exit(0)
 
 
 def create_admin(username):
