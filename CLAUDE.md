@@ -37,10 +37,12 @@ online_form/
 │   ├── database.py          # Connexion SQLite via SQLAlchemy
 │   ├── models.py            # Modeles Pydantic
 │   ├── auth.py              # Authentification admin (JWT)
+│   ├── manage_admin.py      # Script CLI gestion admins (list, create, passwd, delete)
 │   ├── .env                 # Variables d'environnement (SECRET_KEY, ADMIN_PASSWORD)
 │   └── requirements.txt     # Dependances Python
 ├── docs/
 │   ├── SERVER.md            # Documentation du serveur VPS (architecture, services, config)
+│   ├── DEPLOYMENT.md        # Guide de deploiement etape par etape avec commandes
 │   ├── Questionnaire 3.pdf  # Questionnaire original de la recherche
 │   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Mandat officiel du Recteur
 ├── frontend/

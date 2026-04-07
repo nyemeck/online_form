@@ -95,21 +95,35 @@ Nginx (installe, inactif — non utilise)
 | 5678 | TCP       | n8n (Docker)      | 127.0.0.1 only |
 | 8000 | TCP       | FastAPI (a venir) | A configurer   |
 
-## 7. Fichiers de configuration cles
+## 7. Applications deployees
+
+| Application  | Emplacement              | Depot GitHub                         | Methode de deploy |
+|--------------|--------------------------|--------------------------------------|--------------------|
+| online_form  | `/srv/online_form`       | nyemeck/online_form (prive)          | Deploy key SSH (lecture seule) |
+
+## 8. Cles SSH
+
+| Cle                                        | Usage                              |
+|--------------------------------------------|------------------------------------|
+| `~/.ssh/id_deploy_online_form`             | Deploy key pour le depot online_form |
+| Config SSH : `Host github-deploy`          | Alias pour clone/pull via deploy key |
+
+## 9. Fichiers de configuration cles
 
 | Fichier                    | Contenu                                      |
 |----------------------------|----------------------------------------------|
 | `/root/docker-compose.yml` | Definition des services Traefik + n8n         |
 | `/root/.env`               | Variables : DOMAIN_NAME, SUBDOMAIN, SSL_EMAIL |
+| `~/.ssh/config`            | Alias SSH pour deploy key GitHub              |
 
-## 8. Volumes Docker
+## 10. Volumes Docker
 
 | Volume        | Utilise par | Contenu                    |
 |---------------|-------------|----------------------------|
 | traefik_data  | Traefik     | Certificats SSL (acme.json)|
 | n8n_data      | n8n         | Donnees et config n8n      |
 
-## 9. Points d'attention
+## 11. Points d'attention
 
 - **Pas de swap** : En cas de pic memoire, le systeme peut tuer des processus (OOM killer)
 - **Pare-feu inactif** : Tous les ports sont ouverts — a securiser avant mise en production
