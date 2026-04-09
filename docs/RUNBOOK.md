@@ -3,6 +3,33 @@
 > Guide des procedures operationnelles pour les services sur le VPS.
 > Derniere mise a jour : 2026-04-08
 
+## 0. Developpement local (Mac)
+
+### Lancer le serveur FastAPI en local
+
+```bash
+cd /Users/nyemeck/Projects/backend_projects/online_form
+source venv/bin/activate
+cd backend
+uvicorn main:app --reload
+```
+
+L'option `--reload` redemarre automatiquement le serveur quand un fichier change.
+
+### Acceder a l'application en local
+
+| URL                                | Page                          |
+|------------------------------------|-------------------------------|
+| http://localhost:8000              | Formulaire public             |
+| http://localhost:8000/login        | Page de connexion admin       |
+| http://localhost:8000/dashboard    | Tableau de bord (apres login) |
+
+### Arreter le serveur local
+
+`Ctrl+C` dans le terminal ou est lance uvicorn.
+
+---
+
 ## 1. Service FastAPI (Systemd)
 
 Fichier de service : `/etc/systemd/system/online-form.service`
