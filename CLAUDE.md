@@ -50,6 +50,7 @@ online_form/
 │   ├── index.html           # Formulaire public
 │   ├── dashboard.html       # Tableau de bord admin (protege)
 │   ├── login.html           # Page connexion admin
+│   ├── assets/              # Images : logo.png, favicon.png
 │   ├── css/style.css        # Styles
 │   └── js/
 │       ├── app.js           # Logique formulaire

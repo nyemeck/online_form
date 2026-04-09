@@ -232,7 +232,109 @@ WantedBy=multi-user.target
 | `After=network.target` | Demarre apres que le reseau soit disponible |
 | `WantedBy=multi-user.target` | Demarre au boot du serveur |
 
-## 7. Pare-feu (ufw)
+## 7. Gestion des assets (logo et favicon)
+
+Les images sont stockees dans `frontend/assets/` :
+
+| Fichier        | Dimensions | Usage                            |
+|----------------|------------|----------------------------------|
+| `logo.png`     | 400 × 400  | Logo affiche dans le header      |
+| `favicon.png`  | 64 × 64    | Icone de l'onglet du navigateur  |
+
+### Verifier les caracteristiques d'une image
+
+```bash
+# Dimensions et format
+file frontend/assets/logo.png
+
+# Taille fichier
+ls -lh frontend/assets/
+
+# Mode et transparence (necessite Pillow : pip install Pillow)
+python3 -c "
+from PIL import Image
+img = Image.open('frontend/assets/logo.png')
+print(f'Mode: {img.mode}, size: {img.size}')
+print(f'Pixel coin (0,0): {img.getpixel((0, 0))}')
+"
+```
+
+### Reduire la taille / dimensions d'une image
+
+**Avec sips (preinstalle sur Mac, attention : ne preserve pas toujours la transparence)** :
+```bash
+# Redimensionner en gardant les proportions (max 400 px)
+sips -Z 400 source.png --out output.png
+```
+
+**Avec Pillow (Python, preserve la transparence)** :
+```bash
+python3 -c "
+from PIL import Image
+img = Image.open('source.png')
+img.thumbnail((400, 400), Image.LANCZOS)
+img.save('output.png', 'PNG', optimize=True)
+"
+```
+
+### Generer le logo et le favicon avec masque circulaire
+
+Si le logo source a un fond gris/blanc opaque (cas frequent), il faut appliquer un masque
+circulaire pour rendre les coins reellement transparents :
+
+```bash
+python3 << 'EOF'
+from PIL import Image, ImageDraw
+
+src = 'frontend/assets/source_logo.png'
+img = Image.open(src).convert('RGBA')
+size = img.size
+
+# Masque circulaire avec antialiasing (dessine 4x plus grand puis reduit)
+mask_size = (size[0] * 4, size[1] * 4)
+mask = Image.new('L', mask_size, 0)
+draw = ImageDraw.Draw(mask)
+draw.ellipse((0, 0, mask_size[0], mask_size[1]), fill=255)
+mask = mask.resize(size, Image.LANCZOS)
+
+# Appliquer le masque
+result = Image.new('RGBA', size, (0, 0, 0, 0))
+result.paste(img, (0, 0), mask)
+
+# Generer logo.png (400x400)
+logo = result.copy()
+logo.thumbnail((400, 400), Image.LANCZOS)
+logo.save('frontend/assets/logo.png', 'PNG', optimize=True)
+
+# Generer favicon.png (64x64)
+favicon = result.copy()
+favicon.thumbnail((64, 64), Image.LANCZOS)
+favicon.save('frontend/assets/favicon.png', 'PNG', optimize=True)
+
+print('Logo et favicon generes avec succes')
+EOF
+```
+
+### Verifier qu'une image est vraiment transparente
+
+```bash
+python3 -c "
+from PIL import Image
+img = Image.open('frontend/assets/logo.png')
+if img.mode == 'RGBA':
+    alphas = img.split()[3].histogram()
+    transparent = alphas[0]
+    opaque = alphas[255]
+    total = sum(alphas)
+    print(f'Transparents: {100*transparent/total:.1f}%')
+    print(f'Opaques: {100*opaque/total:.1f}%')
+"
+```
+
+> **Note** : Si tous les pixels sont opaques (100%), l'image n'est pas transparente, meme si
+> l'apercu du systeme affiche un motif damier (qui peut etre genere par l'outil de prevue).
+
+## 8. Pare-feu (ufw)
 
 ### Voir les regles actives
 ```bash
@@ -274,7 +376,7 @@ sudo ufw allow from 172.18.0.0/16 to any port 8000
 sudo ufw default allow routed
 ```
 
-## 8. Configuration du routage Traefik
+## 9. Configuration du routage Traefik
 
 Fichier : `/root/traefik-config/online-form.yml`
 
