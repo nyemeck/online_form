@@ -64,6 +64,41 @@ sudo journalctl -u online-form -f
 sudo journalctl -u online-form -n 50
 ```
 
+### Filtrer les logs applicatifs
+
+Le format des logs est : `timestamp | NIVEAU | logger | message`.
+
+```bash
+# Toutes les soumissions de formulaires
+sudo journalctl -u online-form | grep "Form submission"
+
+# Toutes les tentatives de login
+sudo journalctl -u online-form | grep "Admin login"
+
+# Uniquement les connexions echouees
+sudo journalctl -u online-form | grep "Admin login failed"
+
+# Tous les exports
+sudo journalctl -u online-form | grep "Export performed"
+
+# Erreurs uniquement
+sudo journalctl -u online-form | grep "ERROR"
+
+# Logs de la derniere heure
+sudo journalctl -u online-form --since "1 hour ago"
+```
+
+### Changer le niveau de logs (DEBUG, INFO, WARNING, ERROR)
+
+```bash
+# Editer le .env
+sudo nano /srv/online_form/backend/.env
+# → modifier LOG_LEVEL=DEBUG (par exemple)
+
+# Redemarrer pour appliquer
+sudo systemctl restart online-form
+```
+
 ### Tester que l'application repond (en local)
 ```bash
 curl http://127.0.0.1:8000

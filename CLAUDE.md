@@ -37,8 +37,9 @@ online_form/
 │   ├── database.py          # Connexion SQLite via SQLAlchemy
 │   ├── models.py            # Modeles Pydantic
 │   ├── auth.py              # Authentification admin (JWT)
+│   ├── logging_config.py    # Configuration centralisee du systeme de logs
 │   ├── manage_admin.py      # Script CLI gestion admins (list, create, passwd, delete)
-│   ├── .env                 # Variables d'environnement (SECRET_KEY, ADMIN_PASSWORD)
+│   ├── .env                 # Variables d'environnement (SECRET_KEY, LOG_LEVEL)
 │   └── requirements.txt     # Dependances Python
 ├── docs/
 │   ├── INFRASTRUCTURE.md    # Infrastructure VPS (OS, Docker, Traefik, reseau, cles SSH)
@@ -51,7 +52,7 @@ online_form/
 │   ├── index.html           # Formulaire public
 │   ├── dashboard.html       # Tableau de bord admin (protege)
 │   ├── login.html           # Page connexion admin
-│   ├── assets/              # Images : logo.png, favicon.png
+│   ├── assets/              # Images (logo, favicon) et icones SVG
 │   ├── css/style.css        # Styles
 │   └── js/
 │       ├── app.js           # Logique formulaire
@@ -77,3 +78,10 @@ online_form/
 - Presenter chaque etape avec son contexte et sa necessite
 - Attendre la validation de l'utilisateur avant de continuer
 - Ne JAMAIS ajouter "Co-Authored-By" dans les messages de commit
+- Pour toute nouvelle fonctionnalite ou endpoint backend, ajouter des logs pertinents
+  via le systeme de logs centralise (`backend/logging_config.py`).
+  Niveaux a utiliser :
+    - INFO : actions reussies (creation, modification, export, etc.)
+    - WARNING : echecs non bloquants (auth invalide, validation echouee)
+    - ERROR : exceptions et erreurs systeme (avec `exc_info=True`)
+  Ne JAMAIS logger : mots de passe, tokens JWT, donnees personnelles sensibles.

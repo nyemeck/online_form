@@ -7,51 +7,21 @@
 
 | Ordre | Priorite | Tache | Raison |
 |-------|----------|-------|--------|
-| 1 | Haute | Systeme de logs a l'application | Fondation, indispensable en production pour debugging et audit |
-| 2 | Haute | Journal des connexions admin | Securite. Devient simple une fois le systeme de logs en place |
-| 3 | Moyenne | Cache busting des fichiers statiques | Ameliore l'experience utilisateur apres chaque mise a jour |
-| 4 | Basse | Console d'administration web | Confort, le CLI manage_admin.py fonctionne deja |
+| 1 | Haute | Journal des connexions admin (table dediee + dashboard) | Securite, vue centralisee dans le dashboard |
+| 2 | Moyenne | Cache busting des fichiers statiques | Ameliore l'experience utilisateur apres chaque mise a jour |
+| 3 | Basse | Console d'administration web | Confort, le CLI manage_admin.py fonctionne deja |
 
 ---
 
-## 1. Systeme de logs a l'application
+## 1. Journal des connexions admin (vue dashboard)
 
 **Priorite** : Haute
 **Statut** : A faire
 
-### Description
-Mettre en place un systeme de logging Python (module `logging`) pour tracer les actions importantes :
-- Soumissions de formulaires (avec ID, langue, statut)
-- Erreurs et exceptions (stack trace)
-- Connexions admin (succes/echec)
-- Operations sur les comptes admins (create, passwd, delete)
-- Exports CSV/Excel
-
-### Considerations techniques
-- Utiliser le module `logging` standard de Python
-- Niveaux : DEBUG, INFO, WARNING, ERROR, CRITICAL
-- Format : timestamp, niveau, module, message
-- Sortie : stdout (capture par journald via Systemd)
-- Permettre d'augmenter la verbosite via une variable d'environnement (`LOG_LEVEL`)
-- Eviter de logger des donnees sensibles (mots de passe, tokens)
-
-### Comment consulter les logs apres implementation
-```bash
-sudo journalctl -u online-form -f               # Temps reel
-sudo journalctl -u online-form -n 100           # 100 dernieres lignes
-sudo journalctl -u online-form --since "1 hour ago"
-```
-
----
-
-## 2. Journal des connexions admin
-
-**Priorite** : Haute
-**Statut** : A faire (depend de la tache 1)
-
-### Description
-Enregistrer chaque tentative de connexion admin pour detecter des activites suspectes
-et tracer l'activite des administrateurs.
+### Contexte
+Les tentatives de connexion sont deja loggees via le systeme de logs (visible avec
+`sudo journalctl -u online-form | grep "Admin login"`). Cette tache vise a aller plus loin
+en stockant l'historique en base et en l'affichant dans le dashboard admin.
 
 ### Donnees a enregistrer
 - Username tente
@@ -61,16 +31,14 @@ et tracer l'activite des administrateurs.
 - User-Agent (optionnel)
 
 ### Implementation
-- **Option A** : Via le systeme de logs (tache 1) — simple, visible dans journalctl
-- **Option B** : Table `login_history` en base — permet d'afficher dans le dashboard
-
-### Affichage
-- Si Option A : visible via `sudo journalctl -u online-form | grep "login"`
-- Si Option B : nouvelle section dans le dashboard admin avec les 50 dernieres tentatives
+- Creer une table `login_history` (id, username, timestamp, ip, success, user_agent)
+- Ajouter l'enregistrement dans la fonction `login` de `main.py`
+- Nouvelle section dans le dashboard avec les 50 dernieres tentatives
+- Filtres : par username, par succes/echec, par periode
 
 ---
 
-## 3. Cache busting des fichiers statiques
+## 2. Cache busting des fichiers statiques
 
 **Priorite** : Moyenne
 **Statut** : A faire
@@ -105,7 +73,7 @@ Generer automatiquement la version depuis le hash du commit git ou un timestamp 
 
 ---
 
-## 4. Console d'administration web
+## 3. Console d'administration web
 
 **Priorite** : Basse
 **Statut** : A faire
@@ -123,8 +91,16 @@ sans passer par la ligne de commande.
 ### Securite
 - Accessible uniquement aux admins authentifies
 - Confirmation pour les operations destructives
-- Log de chaque operation (depend de la tache 1)
+- Log de chaque operation (deja en place via le systeme de logs)
 
 ### Note
 Le script `backend/manage_admin.py` fonctionne deja et est suffisant pour un usage basique.
 Cette tache est une amelioration de confort, pas une necessite.
+
+---
+
+## Taches terminees
+
+- **Systeme de logs a l'application** (commit `30d90d2`) — module `logging_config.py`,
+  logs sur soumissions, login, exports et operations admin. Sortie vers stdout, capture
+  par journald (`sudo journalctl -u online-form -f`).

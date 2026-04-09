@@ -162,6 +162,7 @@ pip install -r backend/requirements.txt
 # Generer la SECRET_KEY et creer le .env
 cd /srv/online_form/backend
 echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
+echo "LOG_LEVEL=INFO" >> .env
 
 # Creer le premier compte admin
 cd /srv/online_form
