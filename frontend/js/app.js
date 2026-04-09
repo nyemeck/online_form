@@ -29,6 +29,9 @@ function applyTranslations() {
         }
     });
     document.documentElement.lang = currentLang;
+    if (translations.page && translations.page.form) {
+        document.title = translations.page.form;
+    }
 }
 
 function updateLangButtons() {
@@ -211,7 +214,11 @@ function collectFormData() {
 
 async function submitForm(data) {
     const submitBtn = document.getElementById("submit-btn");
+    const successEl = document.getElementById("success-message");
+    const errorEl = document.getElementById("error-message");
     submitBtn.disabled = true;
+    successEl.classList.add("hidden");
+    errorEl.classList.add("hidden");
 
     try {
         const response = await fetch("/api/responses", {
@@ -222,14 +229,14 @@ async function submitForm(data) {
 
         if (response.ok) {
             document.getElementById("survey-form").classList.add("hidden");
-            document.getElementById("success-message").classList.remove("hidden");
+            successEl.classList.remove("hidden");
             window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-            document.getElementById("error-message").classList.remove("hidden");
+            errorEl.classList.remove("hidden");
             submitBtn.disabled = false;
         }
     } catch (error) {
-        document.getElementById("error-message").classList.remove("hidden");
+        errorEl.classList.remove("hidden");
         submitBtn.disabled = false;
     }
 }

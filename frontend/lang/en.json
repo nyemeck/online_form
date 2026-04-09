@@ -3,8 +3,13 @@
     "code": "en",
     "label": "English"
   },
+  "page": {
+    "form": "Survey - University of Ngaoundéré",
+    "login": "Admin - University of Ngaoundéré",
+    "dashboard": "Dashboard - University of Ngaoundéré"
+  },
   "form": {
-    "title": "QUESTIONNAIRE",
+    "title": "SURVEY",
     "subtitle": "Organisational and managerial innovation and performance of the University of Ngaoundéré",
     "intro": {
       "heading": "Introduction for respondents",
@@ -47,7 +52,7 @@
           "ET": "Student at the University of Ngaoundéré",
           "GOV": "Government (MINESUP, MINFI)",
           "EPU": "Employer of graduates (public sector — MINFOPRA, GECAM, …)",
-          "EPR": "Employer of graduates (private sector)"
+          "EPR": "Employer of graduates (private sector - GECAM, ...)"
         }
       }
     },

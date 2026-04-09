@@ -34,6 +34,8 @@ function applyTranslations() {
         if (value) el.textContent = value;
     });
     document.documentElement.lang = currentLang;
+    const pageTitle = t("page.dashboard");
+    if (pageTitle) document.title = pageTitle;
 }
 
 function updateLangButtons() {

@@ -163,6 +163,9 @@
                 }
             });
             document.documentElement.lang = currentLang;
+            if (translations.page && translations.page.login) {
+                document.title = translations.page.login;
+            }
         }
 
         function updateLangButtons() {
