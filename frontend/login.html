@@ -63,6 +63,29 @@
             font-family: inherit;
             transition: border-color 0.2s ease;
         }
+        .password-wrapper {
+            position: relative;
+        }
+        .password-wrapper input {
+            padding-right: 44px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 8px;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: #666;
+            border-radius: 4px;
+        }
+        .password-toggle:hover {
+            background-color: #f0f0f0;
+        }
         .login-field input:focus {
             outline: none;
             border-color: #1a5632;
@@ -126,7 +149,12 @@
                     </div>
                     <div class="login-field">
                         <label for="password" data-i18n="login.password"></label>
-                        <input type="password" id="password" name="password" autocomplete="current-password" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle" id="password-toggle" aria-label="Afficher / Masquer le mot de passe">
+                                <img id="password-toggle-icon" src="/static/assets/icons/eye.svg" alt="">
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="login-btn" id="login-btn" data-i18n="login.submit"></button>
                 </form>
@@ -179,6 +207,18 @@
 
             document.querySelectorAll(".lang-btn").forEach((btn) => {
                 btn.addEventListener("click", () => loadTranslations(btn.dataset.lang));
+            });
+
+            document.getElementById("password-toggle").addEventListener("click", () => {
+                const input = document.getElementById("password");
+                const icon = document.getElementById("password-toggle-icon");
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.src = "/static/assets/icons/eye-off.svg";
+                } else {
+                    input.type = "password";
+                    icon.src = "/static/assets/icons/eye.svg";
+                }
             });
 
             document.getElementById("login-form").addEventListener("submit", async (e) => {
