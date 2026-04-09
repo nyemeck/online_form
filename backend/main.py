@@ -3,9 +3,10 @@ from typing import Optional
 from datetime import datetime
 import csv
 import io
+import logging
 import os
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
@@ -16,11 +17,17 @@ from openpyxl import Workbook
 from database import engine, get_db, Base
 from models import Response
 from auth import authenticate_admin, create_access_token, get_current_admin
+from logging_config import setup_logging
+
+# Configure logging at startup
+setup_logging()
+logger = logging.getLogger("online_form")
 
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Research Form - University of Ngaoundere")
+logger.info("Application started")
 
 # --- Validation enums ---
 
@@ -122,20 +129,35 @@ class ResponseCreate(BaseModel):
 
 @app.post("/api/responses", status_code=status.HTTP_201_CREATED)
 def submit_response(data: ResponseCreate, db: Session = Depends(get_db)):
-    response = Response(**data.model_dump())
-    db.add(response)
-    db.commit()
-    return {"message": "Response recorded successfully"}
+    try:
+        response = Response(**data.model_dump())
+        db.add(response)
+        db.commit()
+        db.refresh(response)
+        logger.info(
+            f"Form submission received: id={response.id}, lang={data.language.value}, status={data.status.value}"
+        )
+        return {"message": "Response recorded successfully"}
+    except Exception as e:
+        logger.error(f"Form submission failed: {e}", exc_info=True)
+        raise
 
 
 @app.post("/api/login")
-def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(
+    request: Request,
+    form: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    client_ip = request.client.host if request.client else "unknown"
     admin = authenticate_admin(form.username, form.password, db)
     if not admin:
+        logger.warning(f"Admin login failed: user={form.username}, ip={client_ip}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
+    logger.info(f"Admin login success: user={admin.username}, ip={client_ip}")
     token = create_access_token(admin.username)
     return {"access_token": token, "token_type": "bearer"}
 
@@ -202,6 +224,7 @@ def get_all_responses(db: Session) -> list[dict]:
 @app.get("/api/export/csv")
 def export_csv(admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
     rows = get_all_responses(db)
+    logger.info(f"Export performed: type=csv, by={admin}, rows={len(rows)}")
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=EXPORT_COLUMNS)
     writer.writeheader()
@@ -217,6 +240,7 @@ def export_csv(admin: str = Depends(get_current_admin), db: Session = Depends(ge
 @app.get("/api/export/excel")
 def export_excel(admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
     rows = get_all_responses(db)
+    logger.info(f"Export performed: type=excel, by={admin}, rows={len(rows)}")
     wb = Workbook()
     ws = wb.active
     ws.title = "Responses"

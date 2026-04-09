@@ -10,11 +10,16 @@ Usage:
 
 import sys
 import getpass
+import logging
 
 from database import engine, Base
 from models import Admin
 from auth import hash_password
+from logging_config import setup_logging
 from sqlalchemy.orm import Session
+
+setup_logging()
+logger = logging.getLogger("manage_admin")
 
 
 def list_admins():
@@ -58,6 +63,7 @@ def create_admin(username):
         admin = Admin(username=username, password_hash=hash_password(password))
         db.add(admin)
         db.commit()
+        logger.info(f"Admin created: user={username}")
         print(f"Admin '{username}' cree avec succes.")
 
 
@@ -70,6 +76,7 @@ def change_password(username):
         password = prompt_password()
         admin.password_hash = hash_password(password)
         db.commit()
+        logger.info(f"Admin password changed: user={username}")
         print(f"Mot de passe de '{username}' mis a jour.")
 
 
@@ -85,6 +92,7 @@ def delete_admin(username):
             return
         db.delete(admin)
         db.commit()
+        logger.info(f"Admin deleted: user={username}")
         print(f"Admin '{username}' supprime.")
 
 
