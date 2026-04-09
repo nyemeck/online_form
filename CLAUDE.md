@@ -44,6 +44,7 @@ online_form/
 │   ├── INFRASTRUCTURE.md    # Infrastructure VPS (OS, Docker, Traefik, reseau, cles SSH)
 │   ├── DEPLOYMENT.md        # Guide de deploiement etape par etape avec commandes
 │   ├── RUNBOOK.md           # Procedures operationnelles (systemd, logs, mises a jour, admins)
+│   ├── TODO.md              # Liste persistante des taches a faire (priorite + details)
 │   ├── Questionnaire 3.pdf  # Questionnaire original de la recherche
 │   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Mandat officiel du Recteur
 ├── frontend/
