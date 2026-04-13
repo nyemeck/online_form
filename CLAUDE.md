@@ -47,6 +47,7 @@ online_form/
 │   ├── RUNBOOK.md           # Operational procedures (systemd, logs, updates, admins)
 │   ├── TODO.md              # Persistent task list (priority + details)
 │   ├── SECURITY.md          # Backend security measures documentation
+│   ├── SECURITY-TODO.md     # Security improvement backlog (priority + details)
 │   ├── Questionnaire 3.pdf  # Original research questionnaire
 │   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Official Rector mandate
 ├── frontend/
