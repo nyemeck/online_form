@@ -245,7 +245,13 @@
                         localStorage.setItem("admin_token", data.access_token);
                         localStorage.setItem("admin_lang", currentLang);
                         window.location.href = "/dashboard";
+                    } else if (response.status === 429) {
+                        errorEl.textContent = getNestedValue(translations, "login.rate_limited");
+                        errorEl.classList.add("visible");
+                        btn.disabled = false;
+                        btn.textContent = getNestedValue(translations, "login.submit");
                     } else {
+                        errorEl.textContent = getNestedValue(translations, "login.error");
                         errorEl.classList.add("visible");
                         btn.disabled = false;
                         btn.textContent = getNestedValue(translations, "login.submit");

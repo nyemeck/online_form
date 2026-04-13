@@ -29,7 +29,8 @@
     "submit": "Envoyer mes réponses",
     "required": "Ce champ est obligatoire",
     "success": "Merci ! Votre réponse a été enregistrée avec succès.",
-    "error": "Une erreur est survenue. Veuillez réessayer."
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "rate_limited": "Trop de soumissions. Veuillez patienter avant de réessayer."
   },
   "sections": {
     "A": {
@@ -156,6 +157,7 @@
     "password": "Mot de passe",
     "submit": "Se connecter",
     "error": "Nom d'utilisateur ou mot de passe incorrect.",
+    "rate_limited": "Trop de tentatives. Veuillez patienter avant de réessayer.",
     "loading": "Connexion en cours..."
   },
   "dashboard": {

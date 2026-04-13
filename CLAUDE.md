@@ -1,87 +1,95 @@
-# Projet : Formulaire de recherche académique - Université de Ngaoundere
+# Project: Academic Research Form — University of Ngaoundere
 
-## Contexte de la recherche
-- **Chercheur** : Prof. Laurent BITJOKA
-- **Formation** : Master Professionnel en Management des Organisations Publiques (ISMP Yaounde)
-- **Encadrant** : Prof. MFOPAIN ABOUBAKAR (Dept. Management, Strategie et Prospective - FSEG, UN)
-- **Sujet** : Innovation organisationnelle et manageriale et performance de l'Universite de Ngaoundere
-- **Mandat** : Delivre par le Recteur de l'Universite de Ngaoundere
+## Research Context
+- **Researcher**: Prof. Laurent BITJOKA
+- **Program**: Master in Public Organisation Management (ISMP Yaounde)
+- **Supervisor**: Prof. MFOPAIN ABOUBAKAR (Dept. Management, Strategy & Foresight — FSEG, UN)
+- **Subject**: Organisational and managerial innovation and performance of the University of Ngaoundere
+- **Mandate**: Issued by the Rector of the University of Ngaoundere
 
 ## Questionnaire (42 items)
-- **Section A** : Informations generales (Sexe, Statut -- 7 categories dont Employeur secteur public et prive)
-- **Section B** : Innovation organisationnelle (IO1-IO5) -- Likert 1-5
-- **Section C** : Innovation manageriale (IM1-IM5) -- Likert 1-5
-- **Section D** : Gouvernance universitaire (G1-G5) -- Likert 1-5
-- **Section E** : Engagement des acteurs (E1-E5) -- Likert 1-5
-- **Section F** : Capacite d'apprentissage organisationnel (A1-A5) -- Likert 1-5
-- **Section G** : Performance universitaire (approche valeur publique)
-  - G1 : Performance academique (PA1-PA4) -- Likert 1-5
-  - G2 : Performance organisationnelle (PO1-PO4) -- Likert 1-5
-  - G3 : Performance societale et developpementale (PS1-PS4) -- Likert 1-5
-  - G4 : Performance institutionnelle / legitimite (PI1-PI4) -- Likert 1-5
-- **Remarque finale** : Texte libre (optionnel)
+- **Section A**: General information (Gender, Status — 7 categories including public/private sector employers)
+- **Section B**: Organisational innovation (IO1-IO5) — Likert 1-5
+- **Section C**: Managerial innovation (IM1-IM5) — Likert 1-5
+- **Section D**: University governance (G1-G5) — Likert 1-5
+- **Section E**: Stakeholder engagement (E1-E5) — Likert 1-5
+- **Section F**: Organisational learning capacity (A1-A5) — Likert 1-5
+- **Section G**: University performance (public value approach)
+  - G1: Academic performance (PA1-PA4) — Likert 1-5
+  - G2: Organisational performance (PO1-PO4) — Likert 1-5
+  - G3: Societal and developmental performance (PS1-PS4) — Likert 1-5
+  - G4: Institutional performance / legitimacy (PI1-PI4) — Likert 1-5
+- **Final comment**: Free text (optional)
 
-## Stack technique
-- **Frontend** : HTML/CSS/JS (leger, compatible connexion limitee Cameroun)
-- **Backend** : Python + FastAPI
-- **Base de donnees** : SQLite
-- **Export** : CSV/Excel pour analyse (SPSS, pandas, etc.)
-- **Hebergement** : VPS Hostinger
+## Tech Stack
+- **Frontend**: HTML/CSS/JS (lightweight, compatible with limited connectivity in Cameroon)
+- **Backend**: Python + FastAPI
+- **Database**: SQLite
+- **Export**: CSV/Excel for analysis (SPSS, pandas, etc.)
+- **Hosting**: Hostinger VPS
 
-## Architecture du projet
+## Project Structure
 ```
 online_form/
-├── CLAUDE.md                # Contexte du projet pour Claude Code
+├── CLAUDE.md                # Project context for Claude Code
 ├── backend/
-│   ├── main.py              # Serveur API FastAPI
-│   ├── database.py          # Connexion SQLite via SQLAlchemy
-│   ├── models.py            # Modeles Pydantic
-│   ├── auth.py              # Authentification admin (JWT)
-│   ├── logging_config.py    # Configuration centralisee du systeme de logs
-│   ├── manage_admin.py      # Script CLI gestion admins (list, create, passwd, delete)
-│   ├── .env                 # Variables d'environnement (SECRET_KEY, LOG_LEVEL)
-│   └── requirements.txt     # Dependances Python
+│   ├── main.py              # FastAPI server
+│   ├── database.py          # SQLite connection via SQLAlchemy
+│   ├── models.py            # Pydantic models
+│   ├── auth.py              # Admin authentication (JWT)
+│   ├── logging_config.py    # Centralized logging configuration
+│   ├── manage_admin.py      # CLI script for admin management (list, create, passwd, delete)
+│   ├── .env                 # Environment variables (SECRET_KEY, LOG_LEVEL)
+│   └── requirements.txt     # Python dependencies
 ├── docs/
-│   ├── INFRASTRUCTURE.md    # Infrastructure VPS (OS, Docker, Traefik, reseau, cles SSH)
-│   ├── DEPLOYMENT.md        # Guide de deploiement etape par etape avec commandes
-│   ├── RUNBOOK.md           # Procedures operationnelles (systemd, logs, mises a jour, admins)
-│   ├── TODO.md              # Liste persistante des taches a faire (priorite + details)
-│   ├── Questionnaire 3.pdf  # Questionnaire original de la recherche
-│   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Mandat officiel du Recteur
+│   ├── INFRASTRUCTURE.md    # VPS infrastructure (OS, Docker, Traefik, network, SSH keys)
+│   ├── DEPLOYMENT.md        # Step-by-step deployment guide with commands
+│   ├── RUNBOOK.md           # Operational procedures (systemd, logs, updates, admins)
+│   ├── TODO.md              # Persistent task list (priority + details)
+│   ├── SECURITY.md          # Backend security measures documentation
+│   ├── Questionnaire 3.pdf  # Original research questionnaire
+│   └── BITJOKA_Mandat de recherche UN-ISMP.pdf  # Official Rector mandate
 ├── frontend/
-│   ├── index.html           # Formulaire public
-│   ├── dashboard.html       # Tableau de bord admin (protege)
-│   ├── login.html           # Page connexion admin
-│   ├── assets/              # Images (logo, favicon) et icones SVG
+│   ├── index.html           # Public form
+│   ├── dashboard.html       # Admin dashboard (protected)
+│   ├── login.html           # Admin login page
+│   ├── assets/              # Images (logo, favicon) and SVG icons
 │   ├── css/style.css        # Styles
 │   └── js/
-│       ├── app.js           # Logique formulaire
-│       └── dashboard.js     # Logique dashboard
-└── exports/                 # Fichiers CSV/Excel exportes
+│       ├── app.js           # Form logic
+│       └── dashboard.js     # Dashboard logic
+└── exports/                 # Generated CSV/Excel files
 ```
 
-## Dependances Python
-- fastapi, uvicorn — API et serveur web
-- sqlalchemy — ORM pour SQLite
-- openpyxl — Export Excel
-- python-jose[cryptography] — Tokens JWT (auth admin)
-- passlib[bcrypt] — Hashage mot de passe
-- python-multipart — Traitement formulaires login
-- python-dotenv — Variables d'environnement (.env)
+## Python Dependencies
+- fastapi, uvicorn — API and web server
+- sqlalchemy — ORM for SQLite
+- openpyxl — Excel export
+- python-jose[cryptography] — JWT tokens (admin auth)
+- passlib[bcrypt] — Password hashing
+- python-multipart — Login form processing
+- python-dotenv — Environment variables (.env)
+- slowapi — Rate limiting
 
-## Decisions prises
-- Anonymat garanti (pas de collecte IP/identifiants)
-- Acces admin protege par mot de passe pour dashboard et exports
-- Dashboard temps reel pour suivi de collecte par categorie de repondant
+## Design Decisions
+- Guaranteed anonymity (no IP or identifier collection)
+- Password-protected admin access for dashboard and exports
+- Real-time dashboard for tracking responses by respondent category
 
-## Preferences de travail
-- Presenter chaque etape avec son contexte et sa necessite
-- Attendre la validation de l'utilisateur avant de continuer
-- Ne JAMAIS ajouter "Co-Authored-By" dans les messages de commit
-- Pour toute nouvelle fonctionnalite ou endpoint backend, ajouter des logs pertinents
-  via le systeme de logs centralise (`backend/logging_config.py`).
-  Niveaux a utiliser :
-    - INFO : actions reussies (creation, modification, export, etc.)
-    - WARNING : echecs non bloquants (auth invalide, validation echouee)
-    - ERROR : exceptions et erreurs systeme (avec `exc_info=True`)
-  Ne JAMAIS logger : mots de passe, tokens JWT, donnees personnelles sensibles.
+## Work Preferences
+- Present each step with its context and rationale
+- Wait for user validation before proceeding
+- NEVER add "Co-Authored-By" in git commit messages
+- All user-facing text must be in the translation files
+  (`frontend/lang/fr.json` and `frontend/lang/en.json`). Never hardcode text
+  visible to the user directly in HTML, JS, or API responses.
+- For every new feature or backend endpoint, add relevant logs
+  via the centralized logging system (`backend/logging_config.py`).
+  Levels to use:
+    - INFO: successful actions (create, update, export, etc.)
+    - WARNING: non-blocking failures (invalid auth, validation failure)
+    - ERROR: exceptions and system errors (with `exc_info=True`)
+  NEVER log: passwords, JWT tokens, or sensitive personal data.
+- On every security change, addition, or configuration update,
+  update `docs/SECURITY.md` to document the implemented measure.
+- All documentation files (.md) must be written in English.

@@ -231,7 +231,14 @@ async function submitForm(data) {
             document.getElementById("survey-form").classList.add("hidden");
             successEl.classList.remove("hidden");
             window.scrollTo({ top: 0, behavior: "smooth" });
+        } else if (response.status === 429) {
+            const rateLimitMsg = getNestedValue(translations, "form.rate_limited");
+            if (rateLimitMsg) errorEl.querySelector("p").textContent = rateLimitMsg;
+            errorEl.classList.remove("hidden");
+            submitBtn.disabled = false;
         } else {
+            const errorMsg = getNestedValue(translations, "form.error");
+            if (errorMsg) errorEl.querySelector("p").textContent = errorMsg;
             errorEl.classList.remove("hidden");
             submitBtn.disabled = false;
         }

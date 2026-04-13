@@ -14,6 +14,10 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from openpyxl import Workbook
 
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 from database import engine, get_db, Base
 from models import Response
 from auth import authenticate_admin, create_access_token, get_current_admin
@@ -26,7 +30,27 @@ logger = logging.getLogger("online_form")
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
 
+# Rate limiter (compteur par IP)
+limiter = Limiter(key_func=get_remote_address)
+
+from fastapi.responses import JSONResponse
+
 app = FastAPI(title="Research Form - University of Ngaoundere")
+app.state.limiter = limiter
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    logger.warning(
+        f"Rate limit exceeded: ip={request.client.host if request.client else 'unknown'}, "
+        f"path={request.url.path}"
+    )
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "rate_limited"},
+    )
+
+
 logger.info("Application started")
 
 # --- Validation enums ---
@@ -128,7 +152,8 @@ class ResponseCreate(BaseModel):
 # --- Public endpoints ---
 
 @app.post("/api/responses", status_code=status.HTTP_201_CREATED)
-def submit_response(data: ResponseCreate, db: Session = Depends(get_db)):
+@limiter.limit("3/hour")
+def submit_response(request: Request, data: ResponseCreate, db: Session = Depends(get_db)):
     try:
         response = Response(**data.model_dump())
         db.add(response)
@@ -144,6 +169,7 @@ def submit_response(data: ResponseCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/api/login")
+@limiter.limit("5/5minutes")
 def login(
     request: Request,
     form: OAuth2PasswordRequestForm = Depends(),
@@ -222,7 +248,8 @@ def get_all_responses(db: Session) -> list[dict]:
 
 
 @app.get("/api/export/csv")
-def export_csv(admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
+@limiter.limit("10/hour")
+def export_csv(request: Request, admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
     rows = get_all_responses(db)
     logger.info(f"Export performed: type=csv, by={admin}, rows={len(rows)}")
     output = io.StringIO()
@@ -238,7 +265,8 @@ def export_csv(admin: str = Depends(get_current_admin), db: Session = Depends(ge
 
 
 @app.get("/api/export/excel")
-def export_excel(admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
+@limiter.limit("10/hour")
+def export_excel(request: Request, admin: str = Depends(get_current_admin), db: Session = Depends(get_db)):
     rows = get_all_responses(db)
     logger.info(f"Export performed: type=excel, by={admin}, rows={len(rows)}")
     wb = Workbook()

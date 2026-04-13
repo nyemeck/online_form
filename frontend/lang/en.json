@@ -29,7 +29,8 @@
     "submit": "Submit my answers",
     "required": "This field is required",
     "success": "Thank you! Your response has been recorded successfully.",
-    "error": "An error occurred. Please try again."
+    "error": "An error occurred. Please try again.",
+    "rate_limited": "Too many submissions. Please wait before trying again."
   },
   "sections": {
     "A": {
@@ -156,6 +157,7 @@
     "password": "Password",
     "submit": "Log in",
     "error": "Invalid username or password.",
+    "rate_limited": "Too many attempts. Please wait before trying again.",
     "loading": "Logging in..."
   },
   "dashboard": {
