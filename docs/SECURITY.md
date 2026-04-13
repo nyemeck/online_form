@@ -45,7 +45,22 @@
 - In-memory storage (not persistent across restarts)
 - An attacker with multiple IPs (botnet) can bypass the per-IP limit
 - No per-account lockout (see "Planned improvements")
-- Does not protect against volumetric DoS (see Traefik rate limiting — to be added)
+- Does not protect against volumetric DoS (handled by Traefik rate limiting below)
+
+### Traefik-level rate limiting (global)
+
+Configured in `/root/traefik-config/online-form.yml` as a middleware.
+
+| Parameter | Value | Meaning |
+|-----------|-------|---------|
+| `average` | 50 | 50 requests/second sustained rate |
+| `burst` | 100 | Up to 100 requests allowed in a short spike |
+| `period` | 1s | Time window for average calculation |
+
+- **Algorithm**: Token Bucket
+- **Scope**: All requests to `form.srv1163941.hstgr.cloud` (HTML, CSS, JS, API, images)
+- **Response on exceeded**: HTTP 429 (handled by Traefik, never reaches FastAPI)
+- **Auto-reload**: Traefik watches config files (`--providers.file.watch=true`)
 
 ## 3. Data Validation
 
@@ -111,7 +126,7 @@ sudo journalctl -u online-form | grep "ERROR"               # Errors
 | # | Measure | Priority | Status |
 |---|---------|----------|--------|
 | 1 | ~~Rate limiting on `/api/responses`~~ | High | Done |
-| 2 | HTTP security headers (CSP, HSTS, X-Frame-Options) | High | To do |
+| 2 | HTTP security headers (CSP, HSTS, X-Frame-Options) via Traefik | High | To do |
 | 3 | `.env` permissions chmod 600 | High | To verify on VPS |
 | 4 | Limit comment field length (max_length) | Medium | To do |
 | 5 | JWT token in HttpOnly cookie | Medium | To do |
