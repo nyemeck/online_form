@@ -41,10 +41,22 @@
 4. The counter resets automatically after the time window expires
 5. In-memory storage: resets on server restart
 
+### Account lockout
+
+Complements rate limiting by blocking a **specific username** regardless of IP.
+
+| Parameter | Value |
+|-----------|-------|
+| Threshold | 4 failed attempts |
+| Window | 15 minutes |
+| Response | HTTP 403, `{"detail": "account_locked"}` |
+| Frontend | Translated message (fr/en) via `login.account_locked` |
+| Reset | Automatic after 15 minutes, or immediately on successful login |
+| Storage | In-memory (resets on server restart) |
+
 ### Known limitations
 - In-memory storage (not persistent across restarts)
-- An attacker with multiple IPs (botnet) can bypass the per-IP limit
-- No per-account lockout (see "Planned improvements")
+- An attacker with multiple IPs (botnet) can bypass the per-IP limit (mitigated by account lockout)
 - Does not protect against volumetric DoS (handled by Traefik rate limiting below)
 
 ### Traefik-level rate limiting (global)
@@ -92,6 +104,7 @@ Configured in `/root/traefik-config/online-form.yml` as a middleware.
 |-------|-------|--------|
 | Successful login | INFO | `Admin login success: user=X, ip=Y` |
 | Failed login | WARNING | `Admin login failed: user=X, ip=Y` |
+| Account locked | WARNING | `Account locked: user=X, ip=Y` |
 | Rate limit exceeded | WARNING | `Rate limit exceeded: ip=X, path=Y` |
 | Form submission | INFO | `Form submission received: id=X, lang=Y, status=Z` |
 | Submission error | ERROR | `Form submission failed: ...` |

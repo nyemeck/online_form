@@ -13,7 +13,7 @@
 | 3 | Limit comment field length (max_length=5000) | Medium | 1 min | To do |
 | 4 | JWT token in HttpOnly cookie | Medium | 1-2h | To do |
 | 5 | Reduce JWT validity (24h → 4h) | Medium | 1 min | To do |
-| 6 | Account lockout after N failed attempts | Medium | 30 min | To do |
+| 6 | ~~Account lockout after N failed attempts~~ | Medium | 30 min | Done |
 | 7 | Fail2ban (system-level IP blocking) | Medium | 30 min | To do |
 | 8 | Automatic database backup | Medium | 20 min | To do |
 | 9 | Cloudflare as frontend proxy (optional) | Low | 30 min | To do |
@@ -230,6 +230,7 @@ For an academic survey, this is acceptable.
 | Rate limiting on exports (10/h) | 2026-04-14 | `31bd83d` |
 | Traefik global rate limiting (50 req/s) | 2026-04-14 | `7634416` |
 | Centralized logging system | 2026-04-09 | `30d90d2` |
+| Account lockout (4 attempts / 15 min) | 2026-04-14 | — |
 | Firewall (ufw) configuration | 2026-04-08 | `7797ef8` |
 | bcrypt password hashing | Initial | — |
 | HTTPS via Traefik/Let's Encrypt | 2026-04-08 | — |

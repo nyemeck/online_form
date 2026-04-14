@@ -250,6 +250,11 @@
                         errorEl.classList.add("visible");
                         btn.disabled = false;
                         btn.textContent = getNestedValue(translations, "login.submit");
+                    } else if (response.status === 403) {
+                        errorEl.textContent = getNestedValue(translations, "login.account_locked");
+                        errorEl.classList.add("visible");
+                        btn.disabled = false;
+                        btn.textContent = getNestedValue(translations, "login.submit");
                     } else {
                         errorEl.textContent = getNestedValue(translations, "login.error");
                         errorEl.classList.add("visible");

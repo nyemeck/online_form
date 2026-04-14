@@ -1,6 +1,7 @@
+from collections import defaultdict
 from enum import Enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 import io
 import logging
@@ -30,8 +31,28 @@ logger = logging.getLogger("online_form")
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
 
-# Rate limiter (compteur par IP)
+# Rate limiter (counter per IP)
 limiter = Limiter(key_func=get_remote_address)
+
+# Account lockout (counter per username)
+LOCKOUT_THRESHOLD = 4
+LOCKOUT_WINDOW = timedelta(minutes=15)
+failed_attempts = defaultdict(list)
+
+
+def is_account_locked(username: str) -> bool:
+    now = datetime.utcnow()
+    recent = [t for t in failed_attempts[username] if now - t < LOCKOUT_WINDOW]
+    failed_attempts[username] = recent
+    return len(recent) >= LOCKOUT_THRESHOLD
+
+
+def record_failed_attempt(username: str):
+    failed_attempts[username].append(datetime.utcnow())
+
+
+def clear_failed_attempts(username: str):
+    failed_attempts.pop(username, None)
 
 from fastapi.responses import JSONResponse
 
@@ -176,13 +197,24 @@ def login(
     db: Session = Depends(get_db),
 ):
     client_ip = request.client.host if request.client else "unknown"
+
+    if is_account_locked(form.username):
+        logger.warning(f"Account locked: user={form.username}, ip={client_ip}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="account_locked",
+        )
+
     admin = authenticate_admin(form.username, form.password, db)
     if not admin:
+        record_failed_attempt(form.username)
         logger.warning(f"Admin login failed: user={form.username}, ip={client_ip}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
+
+    clear_failed_attempts(form.username)
     logger.info(f"Admin login success: user={admin.username}, ip={client_ip}")
     token = create_access_token(admin.username)
     return {"access_token": token, "token_type": "bearer"}

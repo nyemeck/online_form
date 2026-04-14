@@ -158,6 +158,7 @@
     "submit": "Se connecter",
     "error": "Nom d'utilisateur ou mot de passe incorrect.",
     "rate_limited": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+    "account_locked": "Compte temporairement verrouillé. Veuillez patienter 15 minutes.",
     "loading": "Connexion en cours..."
   },
   "dashboard": {
