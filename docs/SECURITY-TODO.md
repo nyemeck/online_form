@@ -15,7 +15,7 @@
 | 5 | ~~Reduce JWT validity (24h → 4h)~~ | Medium | 1 min | Done |
 | 6 | ~~Account lockout after N failed attempts~~ | Medium | 30 min | Done |
 | 7 | Fail2ban (system-level IP blocking) | Medium | 30 min | To do |
-| 8 | Automatic database backup | Medium | 20 min | To do |
+| 8 | ~~Automatic database backup~~ | Medium | 20 min | Done |
 | 9 | Cloudflare as frontend proxy (optional) | Low | 30 min | To do |
 
 ---
@@ -234,6 +234,7 @@ For an academic survey, this is acceptable.
 | `.env` permissions set to 600 | 2026-04-16 | — |
 | Comment field limited to 5000 chars | 2026-04-16 | — |
 | JWT validity reduced to 4 hours | 2026-04-16 | — |
+| Automatic database backup (daily cron) | 2026-04-16 | — |
 | Account lockout (4 attempts / 15 min) | 2026-04-14 | — |
 | Firewall (ufw) configuration | 2026-04-08 | `7797ef8` |
 | bcrypt password hashing | Initial | — |

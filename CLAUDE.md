@@ -59,6 +59,8 @@ online_form/
 │   └── js/
 │       ├── app.js           # Form logic
 │       └── dashboard.js     # Dashboard logic
+├── scripts/
+│   └── backup.sh            # Daily database backup script (cron)
 └── exports/                 # Generated CSV/Excel files
 ```
 

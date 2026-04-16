@@ -435,3 +435,45 @@ http:
 
 > **172.17.0.1** est l'IP du host vu depuis les conteneurs Docker (bridge `docker0`).
 > Pour la retrouver : `ip addr show docker0 | grep inet`
+
+## 10. Database Backup
+
+Script: `/srv/online_form/scripts/backup.sh`
+Backups stored in: `/srv/online_form/backups/`
+Retention: last 30 backups.
+
+### Run a manual backup
+```bash
+/srv/online_form/scripts/backup.sh
+```
+
+### List existing backups
+```bash
+ls -lh /srv/online_form/backups/
+```
+
+### Restore from a backup
+```bash
+# Stop the service
+sudo systemctl stop online-form
+
+# Replace the database with a backup
+cp /srv/online_form/backups/responses_YYYYMMDD_HHMMSS.db /srv/online_form/backend/responses.db
+
+# Restart the service
+sudo systemctl start online-form
+```
+
+### Cron job (daily at 3 AM)
+```bash
+# Edit crontab
+crontab -e
+
+# Add this line:
+0 3 * * * /srv/online_form/scripts/backup.sh
+```
+
+### Verify cron is active
+```bash
+crontab -l
+```
