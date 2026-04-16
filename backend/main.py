@@ -167,7 +167,7 @@ class ResponseCreate(BaseModel):
     pi4: int = Field(ge=1, le=5)
 
     # Final comment
-    comment: Optional[str] = None
+    comment: Optional[str] = Field(None, max_length=5000)
 
 
 # --- Public endpoints ---

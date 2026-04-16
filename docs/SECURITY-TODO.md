@@ -9,10 +9,10 @@
 | # | Task | Priority | Effort | Status |
 |---|------|----------|--------|--------|
 | 1 | ~~HTTP security headers (CSP, HSTS, X-Frame-Options)~~ | High | 20 min | Done |
-| 2 | Verify `.env` permissions (chmod 600) | High | 1 min | To verify |
-| 3 | Limit comment field length (max_length=5000) | Medium | 1 min | To do |
+| 2 | ~~Verify `.env` permissions (chmod 600)~~ | High | 1 min | Done |
+| 3 | ~~Limit comment field length (max_length=5000)~~ | Medium | 1 min | Done |
 | 4 | JWT token in HttpOnly cookie | Medium | 1-2h | To do |
-| 5 | Reduce JWT validity (24h → 4h) | Medium | 1 min | To do |
+| 5 | ~~Reduce JWT validity (24h → 4h)~~ | Medium | 1 min | Done |
 | 6 | ~~Account lockout after N failed attempts~~ | Medium | 30 min | Done |
 | 7 | Fail2ban (system-level IP blocking) | Medium | 30 min | To do |
 | 8 | Automatic database backup | Medium | 20 min | To do |
@@ -231,6 +231,9 @@ For an academic survey, this is acceptable.
 | Traefik global rate limiting (50 req/s) | 2026-04-14 | `7634416` |
 | Centralized logging system | 2026-04-09 | `30d90d2` |
 | HTTP security headers (CSP, HSTS, X-Frame-Options) via Traefik | 2026-04-16 | — |
+| `.env` permissions set to 600 | 2026-04-16 | — |
+| Comment field limited to 5000 chars | 2026-04-16 | — |
+| JWT validity reduced to 4 hours | 2026-04-16 | — |
 | Account lockout (4 attempts / 15 min) | 2026-04-14 | — |
 | Firewall (ufw) configuration | 2026-04-08 | `7797ef8` |
 | bcrypt password hashing | Initial | — |

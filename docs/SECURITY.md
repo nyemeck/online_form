@@ -13,7 +13,7 @@
 
 ### JWT tokens
 - **Algorithm**: HS256
-- **Validity**: 24 hours (`TOKEN_EXPIRE_HOURS` in `auth.py`)
+- **Validity**: 4 hours (`TOKEN_EXPIRE_HOURS` in `auth.py`)
 - **Client-side storage**: `localStorage` (to be migrated to HttpOnly cookie — see "Planned improvements")
 - **Secret**: `SECRET_KEY` in `.env` (not versioned, permissions 600)
 
