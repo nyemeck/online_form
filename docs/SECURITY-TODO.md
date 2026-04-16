@@ -8,7 +8,7 @@
 
 | # | Task | Priority | Effort | Status |
 |---|------|----------|--------|--------|
-| 1 | HTTP security headers (CSP, HSTS, X-Frame-Options) | High | 20 min | To do |
+| 1 | ~~HTTP security headers (CSP, HSTS, X-Frame-Options)~~ | High | 20 min | Done |
 | 2 | Verify `.env` permissions (chmod 600) | High | 1 min | To verify |
 | 3 | Limit comment field length (max_length=5000) | Medium | 1 min | To do |
 | 4 | JWT token in HttpOnly cookie | Medium | 1-2h | To do |
@@ -230,6 +230,7 @@ For an academic survey, this is acceptable.
 | Rate limiting on exports (10/h) | 2026-04-14 | `31bd83d` |
 | Traefik global rate limiting (50 req/s) | 2026-04-14 | `7634416` |
 | Centralized logging system | 2026-04-09 | `30d90d2` |
+| HTTP security headers (CSP, HSTS, X-Frame-Options) via Traefik | 2026-04-16 | — |
 | Account lockout (4 attempts / 15 min) | 2026-04-14 | — |
 | Firewall (ufw) configuration | 2026-04-08 | `7797ef8` |
 | bcrypt password hashing | Initial | — |

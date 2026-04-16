@@ -97,6 +97,19 @@ Configured in `/root/traefik-config/online-form.yml` as a middleware.
 - **Certificates**: Let's Encrypt via Traefik (automatic)
 - **HTTP→HTTPS redirect**: Automatic (Traefik entrypoint web → websecure)
 
+### HTTP Security Headers
+
+Configured via Traefik middleware `security-headers` in `/root/traefik-config/online-form.yml`.
+
+| Header | Value | Protection |
+|--------|-------|------------|
+| `X-Frame-Options` | `DENY` | Clickjacking — prevents embedding in iframes |
+| `X-Content-Type-Options` | `nosniff` | MIME sniffing — browser trusts declared content type |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` | Forces HTTPS for 1 year, prevents downgrade attacks |
+| `Content-Security-Policy` | `default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:` | XSS — only scripts/styles/images from own domain allowed |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Privacy — only sends domain, not full URL, to external sites |
+| `X-XSS-Protection` | `1; mode=block` | Legacy XSS filter for older browsers |
+
 ## 5. Security Logging
 
 ### Logged events
