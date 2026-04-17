@@ -90,6 +90,8 @@ class StatusEnum(str, Enum):
     GOV = "GOV"   # Government (MINESUP, MINFI)
     EPU = "EPU"   # Public sector employer
     EPR = "EPR"   # Private sector employer
+    ALU = "ALU"   # Alumni
+    UNP = "UNP"   # Partner national university
 
 
 class LanguageEnum(str, Enum):

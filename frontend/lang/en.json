@@ -53,7 +53,9 @@
           "ET": "Student at the University of Ngaoundéré",
           "GOV": "Government (MINESUP, MINFI)",
           "EPU": "Employer of graduates (public sector — MINFOPRA)",
-          "EPR": "Employer of graduates (private sector - GECAM, ...)"
+          "EPR": "Employer of graduates (private sector - GECAM, ...)",
+          "ALU": "Alumni",
+          "UNP": "Partner (national) university"
         }
       }
     },
@@ -187,7 +189,9 @@
       "ET": "Student",
       "GOV": "Government (MINESUP, MINFI)",
       "EPU": "Employer (public sector)",
-      "EPR": "Employer (private sector)"
+      "EPR": "Employer (private sector)",
+      "ALU": "Alumni",
+      "UNP": "Partner university"
     },
     "language_labels": {
       "fr": "French",
