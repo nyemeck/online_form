@@ -58,6 +58,7 @@ online_form/
 │   ├── css/style.css        # Styles
 │   └── js/
 │       ├── app.js           # Form logic
+│       ├── login.js         # Login page logic
 │       └── dashboard.js     # Dashboard logic
 ├── scripts/
 │   └── backup.sh            # Daily database backup script (cron)
@@ -96,3 +97,23 @@ online_form/
 - On every security change, addition, or configuration update,
   update `docs/SECURITY.md` to document the implemented measure.
 - All documentation files (.md) must be written in English.
+
+## Security and Production Guidelines
+- **No inline JavaScript**: All JS must be in external files (`frontend/js/`).
+  Inline `<script>` blocks are forbidden — they violate CSP (`Content-Security-Policy`)
+  and weaken XSS protection. This applies to all HTML pages.
+- **No inline styles in HTML**: Use external CSS files (`frontend/css/`).
+  Exception: `<style>` blocks in HTML are tolerated for page-specific styles
+  until they are migrated to external files.
+- Follow backend and frontend security best practices for a
+  production-ready application (OWASP Top 10, CSP, HTTPS, rate limiting,
+  input validation, secure headers, etc.).
+- All security measures must be documented in `docs/SECURITY.md`.
+
+## Debugging
+- **Browser DevTools**: `Cmd+Option+I` (Mac) or `F12` (Windows/Linux)
+  to open the browser console. Useful for:
+  - CSP violations (scripts blocked, resources refused)
+  - JavaScript errors
+  - Network requests (failed API calls, 4xx/5xx responses)
+  - Console warnings and errors
