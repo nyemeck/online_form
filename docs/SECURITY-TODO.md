@@ -14,7 +14,7 @@
 | 4 | JWT token in HttpOnly cookie | Medium | 1-2h | To do |
 | 5 | ~~Reduce JWT validity (24h → 4h)~~ | Medium | 1 min | Done |
 | 6 | ~~Account lockout after N failed attempts~~ | Medium | 30 min | Done |
-| 7 | Fail2ban (system-level IP blocking) | Medium | 30 min | To do |
+| 7 | ~~Fail2ban (system-level IP blocking)~~ | Medium | 30 min | Done |
 | 8 | ~~Automatic database backup~~ | Medium | 20 min | Done |
 | 9 | Cloudflare as frontend proxy (optional) | Low | 30 min | To do |
 
@@ -235,6 +235,8 @@ For an academic survey, this is acceptable.
 | Comment field limited to 5000 chars | 2026-04-16 | — |
 | JWT validity reduced to 4 hours | 2026-04-16 | — |
 | Automatic database backup (daily cron) | 2026-04-16 | — |
+| Fail2ban (SSH + login) | 2026-04-18 | — |
+| Inline JS extracted to external files (CSP compliance) | 2026-04-18 | `68adbec` |
 | Account lockout (4 attempts / 15 min) | 2026-04-14 | — |
 | Firewall (ufw) configuration | 2026-04-08 | `7797ef8` |
 | bcrypt password hashing | Initial | — |

@@ -173,9 +173,32 @@ python3 backend/manage_admin.py passwd <username>
 python3 backend/manage_admin.py delete <username>
 ```
 
-## 5. Troubleshooting
+## 5. Debugging
 
-### 5.1 "Bad Gateway" sur form.srv1163941.hstgr.cloud
+### Browser DevTools
+Open with `Cmd+Option+I` (Mac) or `F12` (Windows/Linux). Useful for:
+- **Console tab**: CSP violations, JavaScript errors, warnings
+- **Network tab**: Failed API calls, 4xx/5xx responses, slow requests
+- **Application tab**: localStorage content (tokens), cookies
+
+### Server-side debugging
+```bash
+# Real-time application logs
+sudo journalctl -u online-form -f
+
+# Test manually with verbose curl
+curl -kv https://form.srv1163941.hstgr.cloud 2>&1 | tail -20
+
+# Test FastAPI directly (bypass Traefik)
+curl http://127.0.0.1:8000
+
+# Check Traefik logs
+sudo docker logs root-traefik-1 2>&1 | tail -20
+```
+
+## 6. Troubleshooting
+
+### 6.1 "Bad Gateway" sur form.srv1163941.hstgr.cloud
 
 **Signification** : Traefik recoit la requete mais n'arrive pas a joindre FastAPI.
 
@@ -233,7 +256,7 @@ L'utilisateur `elzouave` n'a pas acces au dossier `/root`. Utiliser :
 sudo bash -c "cd /root && <commande>"
 ```
 
-## 6. Configuration du service Systemd
+## 7. Configuration du service Systemd
 
 ```ini
 [Unit]
@@ -267,7 +290,7 @@ WantedBy=multi-user.target
 | `After=network.target` | Demarre apres que le reseau soit disponible |
 | `WantedBy=multi-user.target` | Demarre au boot du serveur |
 
-## 7. Gestion des assets (logo et favicon)
+## 8. Gestion des assets (logo et favicon)
 
 Les images sont stockees dans `frontend/assets/` :
 
@@ -369,7 +392,7 @@ if img.mode == 'RGBA':
 > **Note** : Si tous les pixels sont opaques (100%), l'image n'est pas transparente, meme si
 > l'apercu du systeme affiche un motif damier (qui peut etre genere par l'outil de prevue).
 
-## 8. Pare-feu (ufw)
+## 9. Pare-feu (ufw)
 
 ### Voir les regles actives
 ```bash
@@ -411,7 +434,7 @@ sudo ufw allow from 172.18.0.0/16 to any port 8000
 sudo ufw default allow routed
 ```
 
-## 9. Configuration du routage Traefik
+## 10. Configuration du routage Traefik
 
 Fichier : `/root/traefik-config/online-form.yml`
 
@@ -436,7 +459,7 @@ http:
 > **172.17.0.1** est l'IP du host vu depuis les conteneurs Docker (bridge `docker0`).
 > Pour la retrouver : `ip addr show docker0 | grep inet`
 
-## 10. Database Backup
+## 11. Database Backup
 
 Script: `/srv/online_form/scripts/backup.sh`
 Backups stored in: `/srv/online_form/backups/`
@@ -476,4 +499,32 @@ crontab -e
 ### Verify cron is active
 ```bash
 crontab -l
+```
+
+## 12. Fail2ban
+
+Config: `/etc/fail2ban/jail.local`
+Filter: `/etc/fail2ban/filter.d/online-form-login.conf`
+
+### Check status
+```bash
+sudo fail2ban-client status
+sudo fail2ban-client status online-form-login
+sudo fail2ban-client status sshd
+```
+
+### Unban an IP
+```bash
+sudo fail2ban-client set online-form-login unbanip <IP>
+sudo fail2ban-client set sshd unbanip <IP>
+```
+
+### View banned IPs
+```bash
+sudo fail2ban-client status online-form-login | grep "Banned IP"
+```
+
+### Restart after config change
+```bash
+sudo systemctl restart fail2ban
 ```

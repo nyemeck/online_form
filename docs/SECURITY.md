@@ -93,6 +93,21 @@ Configured in `/root/traefik-config/online-form.yml` as a middleware.
 - **Port 8000**: Restricted to Docker networks (172.17.0.0/16, 172.18.0.0/16)
 - **Default policy**: deny incoming, allow outgoing, allow routed
 
+### Fail2ban (system-level IP blocking)
+
+Monitors application logs and automatically bans IPs via firewall rules.
+
+| Jail | Filter | Max retry | Find time | Ban time |
+|------|--------|-----------|-----------|----------|
+| `sshd` | Built-in | 3 | 10 min | 1 hour |
+| `online-form-login` | `Admin login failed: user=.*, ip=<HOST>` | 5 | 10 min | 1 hour |
+
+- **Config**: `/etc/fail2ban/jail.local`
+- **Filter**: `/etc/fail2ban/filter.d/online-form-login.conf`
+- **Backend**: systemd (reads from journald)
+- **Check status**: `sudo fail2ban-client status online-form-login`
+- **Unban an IP**: `sudo fail2ban-client set online-form-login unbanip <IP>`
+
 ### HTTPS
 - **Certificates**: Let's Encrypt via Traefik (automatic)
 - **HTTP→HTTPS redirect**: Automatic (Traefik entrypoint web → websecure)

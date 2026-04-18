@@ -109,11 +109,3 @@ online_form/
   production-ready application (OWASP Top 10, CSP, HTTPS, rate limiting,
   input validation, secure headers, etc.).
 - All security measures must be documented in `docs/SECURITY.md`.
-
-## Debugging
-- **Browser DevTools**: `Cmd+Option+I` (Mac) or `F12` (Windows/Linux)
-  to open the browser console. Useful for:
-  - CSP violations (scripts blocked, resources refused)
-  - JavaScript errors
-  - Network requests (failed API calls, 4xx/5xx responses)
-  - Console warnings and errors
