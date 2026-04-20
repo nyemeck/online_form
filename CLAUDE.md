@@ -39,6 +39,7 @@ online_form/
 │   ├── auth.py              # Admin authentication (JWT)
 │   ├── logging_config.py    # Centralized logging configuration
 │   ├── manage_admin.py      # CLI script for admin management (list, create, passwd, delete)
+│   ├── manage_responses.py  # CLI script for response management (count, clear)
 │   ├── .env                 # Environment variables (SECRET_KEY, LOG_LEVEL)
 │   └── requirements.txt     # Python dependencies
 ├── docs/

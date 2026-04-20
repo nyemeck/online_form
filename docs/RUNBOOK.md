@@ -173,6 +173,18 @@ python3 backend/manage_admin.py passwd <username>
 python3 backend/manage_admin.py delete <username>
 ```
 
+## 4b. Managing responses
+
+```bash
+cd /srv/online_form && source venv/bin/activate
+
+# Count responses
+python3 backend/manage_responses.py count
+
+# Delete all responses (asks for confirmation)
+python3 backend/manage_responses.py clear
+```
+
 ## 5. Debugging
 
 ### Browser DevTools
