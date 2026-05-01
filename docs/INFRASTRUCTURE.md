@@ -32,7 +32,7 @@
 | Git            | 2.43.0    | Installe par defaut                             |
 | Docker         | 29.2.1    | Moteur de conteneurs                            |
 | Docker Compose | 5.0.2     | Plugin Docker (v2)                              |
-| Nginx          | —         | Installe mais **inactif** (conflit port 80 avec Traefik) |
+| ~~Nginx~~      | —         | Desinstalle (conflit port 80 avec Traefik au boot) |
 
 ## 4. Services actifs
 
@@ -147,7 +147,7 @@ Traefik (Docker, ports 80/443)
 
 - **Pas de swap** : En cas de pic memoire, le systeme peut tuer des processus (OOM killer)
 - **Pare-feu actif** : Seuls les ports 22, 80, 443 sont ouverts. Port 8000 restreint aux reseaux Docker
-- **Nginx installe mais inutilise** : Traefik remplit deja le role de reverse proxy
+- **Nginx desinstalle** : Was causing port 80 conflict with Traefik on server reboot
 - **1 seul vCPU** : Limiter le nombre de workers Uvicorn en consequence
 - **Traefik gere le SSL** : Pas besoin de Certbot separement
 - **FastAPI ecoute sur 0.0.0.0** : Necessaire pour le bridge Docker. Le pare-feu bloque l'acces direct au port 8000 depuis l'exterieur

@@ -540,3 +540,48 @@ sudo fail2ban-client status online-form-login | grep "Banned IP"
 ```bash
 sudo systemctl restart fail2ban
 ```
+
+## 13. Known Incidents
+
+### 2026-05-01 — Site unreachable after VPS reboot (ERR_CONNECTION_TIMED_OUT)
+
+**Symptom**: `form.srv1163941.hstgr.cloud` returns `ERR_CONNECTION_TIMED_OUT`.
+
+**Root cause**: Hostinger performed an automatic kernel update (`6.8.0-101` → `6.8.0-110`)
+which triggered a VPS reboot. On boot, Nginx (installed but unused) started before Docker
+and took port 80. When Docker tried to restart Traefik, port 80 was already in use.
+Traefik failed to start silently.
+
+**Debugging steps**:
+```bash
+# 1. Check which services are running
+sudo docker ps                          # Traefik was missing
+sudo systemctl status online-form       # FastAPI was running
+
+# 2. Find when the server rebooted
+who -b                                  # → 2026-04-30 17:52
+sudo last reboot | head -5              # → kernel version change
+
+# 3. Check boot logs for errors
+sudo journalctl --since "2026-04-30 17:52:00" --until "2026-04-30 17:55:00" \
+  | grep -iE "docker|traefik|nginx|port.*80"
+# → "Failed to bind host port 0.0.0.0:80/tcp: address already in use"
+# → Nginx started at 17:52:58, Docker tried port 80 at 17:53:02
+
+# 4. Check Traefik restart count
+sudo docker inspect root-traefik-1 --format='{{.RestartCount}}'
+```
+
+**Resolution**:
+```bash
+# Remove Nginx permanently (we use Traefik, not Nginx)
+sudo systemctl stop nginx
+sudo apt remove -y nginx
+sudo apt autoremove -y
+
+# Recreate Docker containers
+sudo bash -c "cd /root && docker compose down && docker compose up -d"
+```
+
+**Prevention**: Nginx has been uninstalled. No other service should compete
+for ports 80/443 at boot. Traefik has `restart: always` in docker-compose.yml.
