@@ -585,3 +585,64 @@ sudo bash -c "cd /root && docker compose down && docker compose up -d"
 
 **Prevention**: Nginx has been uninstalled. No other service should compete
 for ports 80/443 at boot. Traefik has `restart: always` in docker-compose.yml.
+
+### 2026-05-01 — Linux kernel vulnerability (CVE-2026-31431 "Copy Fail")
+
+**Context**: Hostinger sent an email about a critical kernel vulnerability
+(CVE-2026-31431 "Copy Fail"). It affects all Linux kernels built between 2017 and 2026.
+A local user can gain full root access. Containerized environments are also affected.
+
+**Impact**: Any user with local access to the VPS could escalate to root.
+
+**Debugging steps**:
+```bash
+# 1. Check current kernel version
+uname -r
+# → 6.8.0-110-generic (vulnerable)
+
+# 2. Check if a patched kernel is already downloaded
+apt list --installed 2>/dev/null | grep linux-image
+# → 6.8.0-111 was already installed but not active (needs reboot)
+
+# 3. Check for other pending updates
+sudo apt list --upgradable 2>/dev/null | head -10
+# → Docker, apparmor, etc. also had updates pending
+
+# 4. Check if automatic updates are enabled
+cat /etc/apt/apt.conf.d/20auto-upgrades
+# → Unattended-Upgrade "1" = enabled (downloads but does NOT reboot)
+```
+
+**Resolution**:
+```bash
+# 1. Backup database before any reboot
+/srv/online_form/scripts/backup.sh
+
+# 2. Apply all pending updates (kernel + packages)
+sudo apt update && sudo apt upgrade -y
+
+# 3. Reboot to activate the new kernel
+sudo reboot
+
+# 4. After ~2 min, reconnect and verify
+ssh elzouave@72.62.50.19
+uname -r                                   # → 6.8.0-111-generic (patched)
+sudo docker ps                              # Traefik + n8n running
+sudo systemctl status online-form           # FastAPI running
+sudo fail2ban-client status                 # Fail2ban active
+curl -k https://form.srv1163941.hstgr.cloud # Site accessible
+```
+
+**Key learning**: Ubuntu auto-downloads security patches but does NOT auto-reboot.
+Kernel updates require a manual reboot to take effect. When Hostinger sends a
+kernel advisory, check if the patch is already installed (`apt list --installed | grep linux-image`)
+and reboot if a newer version is available.
+
+**Reboot checklist** (use after every VPS reboot):
+```bash
+uname -r                                    # Kernel version
+sudo docker ps                              # Traefik + n8n
+sudo systemctl status online-form --no-pager | head -5  # FastAPI
+sudo fail2ban-client status                 # Fail2ban
+curl -k https://form.srv1163941.hstgr.cloud | head -3   # Site
+```
